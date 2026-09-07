@@ -1,0 +1,1663 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b1220" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon.svg" />
+  <link rel="apple-touch-icon" href="icon.svg" />
+  <title>F5LControl</title>
+  <style>
+    :root {
+      --bg: #0b1220; --card: #131c2e; --line: #24314b;
+      --txt: #e6ecf7; --muted: #8ea0bf; --acc: #4f8cff; --ok: #35d07f;
+      --warn: #ffb020; --err: #ff5c5c;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: var(--bg); color: var(--txt); padding: 16px; max-width: 640px; margin: 0 auto;
+    }
+    h1 { font-size: 1.2rem; margin: 0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .sub { color: var(--muted); font-size: .82rem; margin: 2px 0 16px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-bottom: 14px; }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; }
+    button {
+      border: 0; border-radius: 12px; padding: 13px 12px; font-size: 1rem; font-weight: 600;
+      color: #fff; background: var(--acc); cursor: pointer;
+    }
+    button.block { flex: 1; min-width: 120px; }
+    button.sec { background: #2a3752; }
+    button.danger { background: #7a2531; }
+    button.mini { padding: 8px 12px; font-size: .95rem; }
+    button:disabled { opacity: .4; cursor: not-allowed; }
+    .chip { font-size: .78rem; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: #2a3752; color: var(--muted); }
+    .chip.on { background: rgba(53,208,127,.15); color: var(--ok); }
+    .chip.off { background: rgba(255,92,92,.15); color: var(--err); }
+    .titrow { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .titrow strong { font-size: .95rem; }
+
+    /* Lista de vuelos */
+    .vuelo { display: flex; align-items: stretch; gap: 8px; margin-bottom: 8px; }
+    .vuelo-main { flex: 1; background: #0f1626; border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; cursor: pointer; }
+    .vuelo.sel .vuelo-main { border-color: var(--acc); background: rgba(79,140,255,.10); }
+    .vuelo-t { font-weight: 700; }
+    .vuelo-s { font-size: .78rem; color: var(--muted); }
+
+    /* Estadísticas */
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .stat { background: #0f1626; border: 1px solid var(--line); border-radius: 10px; padding: 10px; text-align: center; }
+    .stat .n { font-size: 1.35rem; font-weight: 700; }
+    .stat .l { font-size: .68rem; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; }
+
+    table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+    th, td { padding: 7px 10px; text-align: right; border-bottom: 1px solid var(--line); font-size: .9rem; }
+    th { color: var(--muted); font-weight: 600; text-transform: uppercase; font-size: .7rem; }
+    .tablewrap { max-height: 220px; overflow-y: auto; margin-top: 10px; }
+    svg { width: 100%; height: auto; display: block; margin-top: 10px; }
+    #grafico { cursor: crosshair; touch-action: none; }
+    .series { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 8px; font-size: .78rem; color: var(--txt); }
+    .series label { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; user-select: none; }
+    .series input { accent-color: var(--acc); margin: 0; }
+    .series i { width: 16px; height: 3px; border-radius: 2px; display: inline-block; }
+    .series i.tri { height: 8px; background: linear-gradient(90deg,#a855f7 0 33%,#2ec25a 33% 66%,#ff4d4d 66% 100%); }
+    .esteq { margin: 0 0 12px; padding: 7px 11px; border: 1px solid var(--line); border-radius: 10px; background: #0f1626; font-size: .8rem; color: var(--muted); }
+    .esteq .est-hdr { font-weight: 700; color: var(--txt); margin-bottom: 3px; }
+    .esteq .est-row { display: flex; flex-wrap: wrap; gap: 3px 14px; }
+    .esteq .est-row > span { display: inline-flex; align-items: center; white-space: nowrap; }
+    .esteq b { color: var(--txt); font-weight: 600; margin-left: 3px; }
+    .est-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--muted); margin-right: 5px; }
+    .series label.off { opacity: .4; }
+    .series input:disabled + i, .series input:disabled ~ * { opacity: .5; }
+    #log { font-family: ui-monospace, monospace; font-size: .74rem; color: var(--muted); white-space: pre-wrap; max-height: 110px; overflow-y: auto; }
+    .hint { font-size: .82rem; color: var(--muted); }
+    .hidden { display: none; }
+    .inp { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--line); background: #0f1626; color: var(--txt); font-size: 1rem; margin-bottom: 8px; }
+    .rng { width: 100%; accent-color: var(--acc); margin: 6px 0 10px; }
+    .lbl { display: block; font-size: .74rem; color: var(--muted); margin: 6px 0 3px; }
+    .cfginfo { margin-top: 12px; font-size: .82rem; color: var(--muted); display: flex; flex-direction: column; gap: 5px; }
+    summary { list-style: none; cursor: pointer; font-weight: 700; }
+    summary::-webkit-details-marker { display: none; }
+    details.exp { border: 1px dashed var(--warn); border-radius: 10px; padding: 8px 11px; margin: 8px 0 12px; }
+    details.exp > summary { color: var(--warn); font-weight: 700; font-size: .9rem; }
+    .barwrap { background: #0f1626; border: 1px solid var(--line); border-radius: 999px; height: 12px; overflow: hidden; margin-top: 10px; }
+    .barfill { height: 100%; background: var(--acc); width: 0%; transition: width .15s ease; }
+    .resumen { display: flex; gap: 20px; flex-wrap: wrap; font-size: .84rem; color: var(--muted); margin-top: 2px; }
+    .resumen b { color: var(--txt); font-weight: 600; }
+    .ayuda { margin-top: 12px; font-size: .82rem; color: var(--muted); background: #0f1626; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+    .ayuda .t { font-weight: 600; color: var(--txt); margin-bottom: 4px; }
+    /* Modal "Cómo conectar" */
+    .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,.62); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 200; }
+    .modal-bg.hidden { display: none; }   /* gana a `.modal-bg { display:flex }` para que `hidden` oculte de verdad */
+    .modal-card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; width: 100%; max-width: 460px; max-height: 86vh; overflow-y: auto; }
+    .modal-t { font-weight: 700; color: var(--txt); font-size: 1.05rem; margin-bottom: 8px; }
+    .modal-body { font-size: .86rem; color: var(--muted); line-height: 1.5; }
+    .modal-body b { color: var(--txt); }
+    .modal-body h4 { color: var(--acc); font-size: .88rem; margin: 12px 0 4px; }
+    .modal-body ol { margin: 3px 0 3px 18px; padding: 0; }
+    .modal-body li { margin: 3px 0; }
+    .modal-body .nota { margin-top: 12px; padding: 8px 10px; border-left: 3px solid var(--acc); background: #0f1626; border-radius: 6px; }
+    .ayuda ol { margin: 4px 0 0; padding-left: 18px; }
+    .ayuda li { margin: 4px 0; }
+    .ayuda b { color: var(--txt); font-weight: 600; }
+    .foot { margin-top: 22px; padding-top: 12px; border-top: 1px solid var(--line); font-size: .78rem; color: var(--muted); line-height: 1.6; text-align: center; }
+    .foot .ft { font-weight: 700; color: var(--txt); margin-bottom: 3px; }
+    .foot a { color: var(--acc); text-decoration: none; }
+    .foot a:hover { text-decoration: underline; }
+    .updbanner { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; border: 1px solid var(--warn); background: rgba(230,160,0,.12); color: var(--warn); border-radius: 12px; padding: 10px 12px; margin: 10px 0; font-weight: 600; font-size: .85rem; }
+    .updbanner.hidden { display: none; }   /* gana a `.updbanner { display:flex }` para que `hidden` oculte de verdad */
+    .updbanner .updbtns { margin-left: auto; display: flex; gap: 8px; }
+    .updbanner button { white-space: nowrap; }
+    .ver { position: fixed; top: 6px; right: 9px; font-size: .62rem; color: var(--muted); opacity: .75; z-index: 10; }
+  </style>
+</head>
+<body>
+  <div id="ver" class="ver"></div>
+  <h1>🛩️ F5LControl <span id="estado" class="chip off">Desconectado</span></h1>
+  <div id="sub" class="sub"></div>
+
+  <div id="estadoEquipo" class="esteq hidden">
+    <div class="est-hdr">Estado del equipo: <b id="eeArmado">–</b></div>
+    <div class="est-row">
+      <span><span class="est-dot" id="eeBaroDot"></span>Barómetro: <b id="eeBaro">–</b></span>
+      <span><span class="est-dot" id="eeRxDot"></span>PWM receptor: <b id="eeRx">–</b></span>
+    </div>
+  </div>
+
+  <div id="updBanner" class="updbanner hidden">
+    <span id="updBannerTxt">🔔 Hay una versión más nueva. Se recomienda actualizar desde GitHub.</span>
+    <span class="updbtns">
+      <button id="updBannerIgnorar" class="sec mini">Ignorar</button>
+      <button id="updBannerBtn" class="sec mini">Ir a GitHub ↗</button>
+    </span>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <button id="btnConectar" class="block">🔗 Conectar</button>
+      <button id="btnImportar" class="sec block">📁 Importar .vlo</button>
+      <button id="btnCerrar" class="sec block hidden">✂️ Cerrar</button>
+    </div>
+    <input id="fileVlo" type="file" accept=".vlo,application/json" style="display:none" />
+    <p id="aviso" class="hint" style="margin:10px 0 0"></p>
+    <button id="btnAyuda" class="sec mini" style="margin-top:10px">❓ Cómo conectar</button>
+  </div>
+
+  <!-- Modal: instrucciones de conexión (se abre con el botón "Cómo conectar") -->
+  <div id="ayudaModal" class="modal-bg hidden">
+    <div class="modal-card">
+      <div class="modal-t">📶 Cómo conectar por Bluetooth</div>
+      <div class="modal-body">
+        <p>Hay dos formas de entrar en modo Bluetooth. En ambas, el <b>modo vuelo queda bloqueado</b> (el motor no arranca desde el limitador).</p>
+        <h4>Método 1 — con la radio encendida</h4>
+        <ol>
+          <li>Encendé la radio y dejá el acelerador al <b>mínimo</b>.</li>
+          <li>Encendé la placa (el LED empieza a <b>parpadear lento</b> = ventana de arranque).</li>
+          <li>Dentro de los <b>primeros 2 segundos</b>, presioná el botón <b>BOOT (sync)</b>.</li>
+          <li>El equipo entra en Bluetooth y el <b>LED pasa a parpadeo rápido</b>.</li>
+          <li>Tocá <b>🔗 Conectar</b> y elegí <b>ESP32-FLIGHT</b> (o el nombre que le hayas puesto).</li>
+        </ol>
+        <h4>Método 2 — con la radio apagada ✅ <span style="color:var(--ok)">(mejor opción)</span></h4>
+        <ol>
+          <li>Dejá la radio <b>apagada</b> y encendé la placa (enchufá la <b>LiPo</b> o alimentala por <b>USB</b>).</li>
+          <li>Al no detectar señal del receptor, el equipo entra <b>solo</b> en Bluetooth (<b>LED rápido</b>).</li>
+          <li>Tocá <b>🔗 Conectar</b> y elegí tu equipo.</li>
+        </ol>
+        <div class="nota"><b>Para volver a modo vuelo:</b> reiniciá la placa con la <b>radio encendida</b>, acelerador al mínimo, y <b>sin apretar BOOT</b> durante los primeros 2 s.</div>
+      </div>
+      <button id="btnAyudaCerrar" class="block" style="margin-top:12px">Cerrar</button>
+    </div>
+  </div>
+
+  <div id="panel" class="hidden">
+    <!-- Aviso persistente: debug Serial activado -->
+    <div id="debugBanner" class="card hidden" style="border:1px solid var(--warn);background:rgba(230,160,0,.12);color:var(--warn);font-weight:600">
+      🐞 <b>Debug Serial ACTIVADO</b> (guardado en memoria, sigue activo tras reiniciar) — desactivalo antes de volar en Configuración → Solo para expertos.
+    </div>
+    <!-- Lista de vuelos -->
+    <div class="card">
+      <div class="titrow">
+        <strong>Vuelos guardados</strong>
+        <div class="row" style="gap:6px">
+          <button id="btnActualizar" class="sec mini">🔄 Actualizar</button>
+          <button id="btnExportar" class="sec mini">⬇️ .vlo</button>
+          <button id="btnExportarCsv" class="sec mini hidden">⬇️ CSV</button>
+        </div>
+      </div>
+      <select id="selVuelo" class="inp" style="margin-bottom:0"><option value="">— sin vuelos —</option></select>
+    </div>
+
+    <!-- Barra de progreso de descarga -->
+    <div id="cargando" class="card hidden">
+      <div id="cargTxt" style="font-weight:600">Obteniendo datos…</div>
+      <div class="barwrap"><div id="cargBar" class="barfill"></div></div>
+    </div>
+
+    <!-- Detalle del vuelo seleccionado -->
+    <div id="detalle" class="card hidden">
+      <div class="titrow">
+        <strong id="dTitulo">Vuelo</strong>
+        <div class="row" style="gap:6px">
+          <button id="btnCsv" class="sec mini">💾 CSV</button>
+          <button id="btnBorrar" class="danger mini">🗑 Borrar</button>
+        </div>
+      </div>
+      <div class="resumen">
+        <span><span id="stDurLbl">Duración</span>: <b id="stDur">–</b></span>
+        <span id="stMotWrap" class="hidden">Tiempo de motor: <b id="stMot">–</b></span>
+        <span>Altura máx.: <b id="stMax">–</b> m</span>
+        <label style="cursor:pointer;white-space:nowrap"><input type="checkbox" id="chkZona" checked> Limpiar zona muerta</label>
+      </div>
+      <svg id="grafico" viewBox="0 0 340 270" role="img" aria-label="Altura y PWM vs tiempo"></svg>
+      <div id="serieCtrl" class="series">
+        <label><input type="checkbox" id="chkAlt" checked><i style="background:#ff9d3c"></i>Altura</label>
+        <label><input type="checkbox" id="chkPin" checked><i style="background:#e11d1d"></i>PWM entrada</label>
+        <label><input type="checkbox" id="chkPout" checked><i style="background:#1f6fe0"></i>PWM salida</label>
+        <label id="lblMotor"><input type="checkbox" id="chkMotor" checked><i class="tri"></i>Colorear por motor</label>
+      </div>
+      <div id="motorLeyenda" class="series hidden" style="margin-top:2px">
+        <span><i style="background:#a855f7"></i>Motor — empuje inicial</span>
+        <span><i style="background:#2ec25a"></i>Planeo (motor apagado)</span>
+        <span><i style="background:#ff4d4d"></i>Motor tras rearme</span>
+      </div>
+    </div>
+
+    <!-- Configuración (SETUP) + Consola, al final -->
+    <details id="cfgCard" class="card">
+      <summary>⚙️ Configuración del ESP32 (firmware)</summary>
+      <div style="margin-top:12px">
+        <label class="lbl">Nombre del piloto</label>
+        <input id="cfgPiloto" class="inp" maxlength="50" placeholder="—" />
+        <label class="lbl">Modelo</label>
+        <input id="cfgModelo" class="inp" maxlength="50" placeholder="—" />
+        <label class="lbl">Nombre Bluetooth (aplica al reiniciar)</label>
+        <input id="cfgBtNombre" class="inp" maxlength="24" placeholder="ESP32-FLIGHT" />
+        <label class="lbl">Muestreo (segundos, 0.1 a 25.5 · ideal 1 s)</label>
+        <input id="cfgMuestreo" class="inp" type="text" inputmode="decimal" placeholder="1.0" />
+        <details class="exp">
+          <summary>🔧 Solo para expertos (avanzado)</summary>
+          <div class="hint" style="margin:6px 0 10px;color:var(--warn)">⚠️ Cambiar esto puede dejar el equipo sin conectar o sin controlar el motor. Tocá solo si sabés lo que hacés.</div>
+          <label class="lbl">CPU (MHz) — aplica al reiniciar</label>
+          <select id="cfgCpu" class="inp">
+            <option value="80">80 MHz (menos calor / consumo)</option>
+            <option value="160">160 MHz (máxima performance)</option>
+          </select>
+          <label class="lbl">Pin PWM entrada — receptor (aplica al reiniciar)</label>
+          <select id="cfgPinIn" class="inp" onchange="validarPines()">
+            <option value="0">GPIO 0</option>
+            <option value="1">GPIO 1</option>
+            <option value="3">GPIO 3</option>
+            <option value="4">GPIO 4</option>
+            <option value="7">GPIO 7</option>
+            <option value="10">GPIO 10</option>
+          </select>
+          <label class="lbl">Pin salida al ESC — motor (aplica al reiniciar)</label>
+          <select id="cfgPinEsc" class="inp" onchange="validarPines()">
+            <option value="0">GPIO 0</option>
+            <option value="1">GPIO 1</option>
+            <option value="3">GPIO 3</option>
+            <option value="4">GPIO 4</option>
+            <option value="7">GPIO 7</option>
+            <option value="10">GPIO 10</option>
+          </select>
+          <div id="cfgPinMsg" class="hint" style="margin-top:-4px;min-height:1.1em"></div>
+          <label class="lbl" style="margin-top:10px">Debug por Serial (diagnóstico)</label>
+          <button id="btnDebug" class="sec mini">🐞 Activar debug Serial</button>
+          <div style="margin-top:6px">Estado: <b id="debugEstado" style="color:var(--muted)">DESACTIVADO</b></div>
+          <div class="hint" style="margin-top:6px;color:var(--warn)">⚠️ Solo para diagnóstico con la placa conectada por USB. <b>NO dejarlo activado para volar</b> (imprime por cada muestra y puede molestar al logging). <b>Queda guardado en memoria y sigue activo aunque reinicies la placa</b> hasta que lo desactives acá.</div>
+        </details>
+        <div id="lcdSection" style="margin-top:10px;border-top:1px solid var(--line);padding-top:10px">
+          <label class="lbl" style="margin:0 0 4px;font-weight:600;color:var(--txt)">🖥️ Pantalla (OLED)</label>
+          <div id="lcdNoSoporte" class="hint">Este equipo no tiene pantalla (no se detectó OLED).</div>
+          <div id="lcdControls" class="hidden">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.9rem">
+              <input type="checkbox" id="cfgLcdOn"> Usar pantalla
+            </label>
+            <label class="lbl" style="margin-top:10px">Altura de autoencendido: <b id="cfgLcdAltVal">1.0</b> m (0 a 3)</label>
+            <input id="cfgLcdAlt" class="rng" type="range" min="0" max="3" step="0.1" value="1" />
+            <div class="hint" style="margin-top:2px">Al bajar de esta altura (planeo/aterrizaje) la pantalla se enciende y muestra si el vuelo fue <b>válido/nulo</b> y la <b>altura máxima</b>.</div>
+          </div>
+        </div>
+        <button id="btnGuardarCfg" class="block" style="margin-top:16px">💾 Guardar configuración</button>
+        <div id="cfgMsg" class="hint" style="margin-top:8px;min-height:1.1em"></div>
+        <div class="cfginfo">
+          <div>Versión FW: <b id="cfgVersion">–</b></div>
+          <div>Versión Web: <b id="cfgWebVer">–</b></div>
+          <div>Desarrollador: <b id="cfgDev">–</b></div>
+          <div>Barómetro: <b id="cfgBaro">–</b></div>
+          <div>Soporte LCD: <b id="cfgLcd">–</b></div>
+          <button id="btnUpd" class="sec mini" style="margin-top:8px">🔄 Buscar actualizaciones</button>
+          <div id="updateInfo" style="margin-top:6px"></div>
+        </div>
+        <div id="fsBox" class="cfginfo hidden" style="margin-top:10px">
+          <div>Memoria de vuelos</div>
+          <div class="barwrap"><div id="fsBar" class="barfill"></div></div>
+          <div id="fsTxt" style="margin-top:6px">–</div>
+          <button id="btnBorrarTodos" class="danger mini" style="margin-top:8px" disabled title="No hay vuelos para borrar">🗑 Borrar todos los vuelos</button>
+        </div>
+        <div class="cfginfo" style="margin-top:10px">
+          <div style="opacity:.7;font-size:.8rem">Límites del limitador (fijos por reglas de la categoría — no editables):</div>
+          <div>Altura de corte: <b id="cfgAltCorte">–</b> m</div>
+          <div>Tiempo máx. de motor: <b id="cfgTMotor">–</b> s</div>
+          <div>Rearranque: <b id="cfgRearme">–</b></div>
+          <div>Ventana de arranque: <b id="cfgTbtInfo">–</b> s (fija)</div>
+        </div>
+        <button id="btnBaro" class="sec mini" style="margin-top:10px">🌡️ Consultar barómetro</button>
+        <div id="baroInfo" class="cfginfo"></div>
+        <button id="btnPwm" class="sec mini" style="margin-top:10px">📡 Leer PWM del receptor</button>
+        <button id="btnPwmMon" class="sec mini" style="margin-top:6px">▶️ Monitor PWM en vivo</button>
+        <div id="pwmInfo" class="cfginfo"></div>
+        <button id="btnReboot" class="danger mini" style="margin-top:12px">🔁 Reiniciar placa</button>
+        <div style="margin-top:16px;border-top:1px solid var(--line);padding-top:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <strong style="font-size:.85rem">Consola</strong>
+            <button id="btnLog" class="sec mini">Mostrar consola</button>
+          </div>
+          <div id="log" class="hidden" style="margin-top:8px"></div>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <div class="foot">
+    <div class="ft">Autor</div>
+    <div>Desarrollo: <b>DRSistemas / JMG</b> — (Tandil · Bs. As. · Argentina)</div>
+    <div>GIT: <a href="https://github.com/drsistemas01/F5LControl" target="_blank" rel="noopener">github.com/drsistemas01/F5LControl</a></div>
+    <div>Soporte: <a href="mailto:soporte.f5lcontrol@gmail.com">soporte.f5lcontrol@gmail.com</a></div>
+    <div>Proyecto orientado a aeromodelismo F5L con ESP32-C3.</div>
+  </div>
+
+  <script>
+    // ==== Contrato BLE (mismos UUIDs del firmware) ====
+    const SVC        = 'f1a70001-5b3c-4d9a-9e21-0a1b2c3d4e5f';
+    const CH_STATUS  = 'f1a70002-5b3c-4d9a-9e21-0a1b2c3d4e5f';
+    const CH_COMMAND = 'f1a70003-5b3c-4d9a-9e21-0a1b2c3d4e5f';
+    const CH_DATA    = 'f1a70004-5b3c-4d9a-9e21-0a1b2c3d4e5f';
+    const WEB_VERSION = '3.0.16'; // changelog de la Web en docs/history_WEB.md
+
+    let device, chStatus, chCommand, chData;
+    let flights = [];          // [{id, n, dur}]
+    let flightsTmp = [];
+    let registros = [];        // vuelo seleccionado [{t, a}]
+    let selectedId = null;
+    let modo = null;           // 'list' | 'flight' | 'cfg'
+    let chartMap = null;       // geometría del gráfico para el hover/zoom
+    let tView = null;          // [t0,t1] visible (null = vuelo completo)
+    const pointers = new Map();// punteros activos (mouse/dedos)
+    let dragging = false, dragStartSvg = 0, dragStartView = null;
+    let pinchStartDist = 0, pinchStartView = null;
+    let cfg = {};              // configuración (SETUP)
+    let cfgReintentado = false; // reintento único de GETCFG si llega incompleto (drop BLE de la cola)
+    let baroData = {};         // lectura instantánea del barómetro
+    let pwmData = {};          // lectura instantánea del PWM del receptor
+    let fsData = {};           // uso de memoria LittleFS (GETFS)
+    let pwmMonOn = false;      // monitor de PWM en vivo activo
+    let debugOn  = false;      // debug por Serial activo (comando DEBUG:1/0; no se persiste)
+    let esperados = 0;         // registros esperados del vuelo en descarga
+    let conectadoBT = false, modoArchivo = false;   // origen de los datos
+    let vuelosCache = {};      // id -> [{t,a}] (descargados por BT o importados)
+    let motivoTmp = 0;         // motivo del 1er corte del vuelo en descarga (0=ninguno 1=acel 2=tiempo 3=altura 4=señal 5=sensor)
+    let motivoCache = {};      // id -> motivo de corte
+    let motivoActual = 0;      // motivo del vuelo mostrado
+    let vueloInfo = null;      // análisis del vuelo (corte/aterrizaje/tiempo), lo llena dibujarGrafico
+    let resolverDescarga = null;
+    let resolverLista = null;      // resuelve al llegar FLIGHTS_END (para borrado en cadena)
+    let borrandoTodos = false;     // evita pedir GETFS entre borrados masivos
+    let fsAvisoLleno = false;      // ya se avisó del 80% en esta sesión
+    let serieVis = { alt: true, pin: true, pout: true, motor: true };  // series visibles (colorear por motor ON por defecto)
+    const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+    function actualizarProgreso() {
+      const n = registros.length;
+      const pct = esperados > 0 ? Math.min(100, Math.round(n / esperados * 100)) : 0;
+      $('cargBar').style.width = pct + '%';
+      $('cargTxt').textContent = esperados > 0
+        ? `Obteniendo datos…  ${n} / ${esperados}  (${pct}%)`
+        : `Obteniendo datos…  ${n}`;
+    }
+
+    const $ = (id) => document.getElementById(id);
+    const enc = new TextEncoder(), dec = new TextDecoder();
+
+    function log(msg) {
+      const t = new Date().toLocaleTimeString();
+      $('log').textContent += `[${t}] ${msg}\n`;
+      $('log').scrollTop = $('log').scrollHeight;
+    }
+    function mostrarAviso(msg, color) { $('aviso').textContent = msg; $('aviso').style.color = color || ''; }
+
+    function actualizarBotonesExport() {
+      const hay = flights.length > 0;
+      $('btnExportar').classList.toggle('hidden', !(conectadoBT && hay));   // .vlo: solo BT
+      $('btnExportarCsv').classList.toggle('hidden', !(modoArchivo && hay)); // CSV: solo archivo
+    }
+
+    function configurarUISesion() {
+      const enSesion = conectadoBT || modoArchivo;
+      const c = $('estado');
+      c.textContent = conectadoBT ? 'Conectado' : (modoArchivo ? 'Archivo' : 'Desconectado');
+      c.className = 'chip ' + (enSesion ? 'on' : 'off');
+      $('panel').classList.toggle('hidden', !enSesion);
+      $('btnConectar').classList.toggle('hidden', enSesion);
+      $('btnImportar').classList.toggle('hidden', enSesion);
+      $('btnCerrar').classList.toggle('hidden', !enSesion);
+      $('btnAyuda').classList.toggle('hidden', enSesion);   // "Cómo conectar" solo en la pantalla inicial
+      // Config, borrar y actualizar: solo con dispositivo por BT
+      $('btnActualizar').classList.toggle('hidden', !conectadoBT);
+      $('cfgCard').classList.toggle('hidden', !conectadoBT);
+      $('cfgCard').open = false;   // la sección de Configuración siempre arranca minimizada
+      $('estadoEquipo').classList.toggle('hidden', !conectadoBT);   // estado del equipo: solo con placa por BT
+      $('btnBorrar').classList.toggle('hidden', !conectadoBT);
+      if (!conectadoBT) $('fsBox').classList.add('hidden');   // memoria: solo con placa conectada
+      if (!conectadoBT) debugOn = false;   // sin placa por BT no hay debug posible (y el reboot lo apaga)
+      reflejarDebug();
+      actualizarBotonesExport();
+      if (!enSesion) $('sub').textContent = '';
+    }
+
+    function setEstado(conectado) {
+      conectadoBT = conectado;
+      if (conectado) { modoArchivo = false; vuelosCache = {}; cfgReintentado = false; }
+      configurarUISesion();
+    }
+
+    async function enviar(cmd) {
+      await chCommand.writeValue(enc.encode(cmd));
+      log('→ ' + cmd);
+    }
+
+    // ---- Conexión ----
+    async function conectarGatt(dev, intentos = 3) {
+      for (let i = 1; i <= intentos; i++) {
+        try { log(`Conectando (intento ${i}/${intentos})...`); return await dev.gatt.connect(); }
+        catch (e) { log('Fallo: ' + e.message); if (i === intentos) throw e; await new Promise(r => setTimeout(r, 900)); }
+      }
+    }
+
+    async function conectar() {
+      if (!navigator.bluetooth) { mostrarAviso('⚠️ Este navegador no soporta Web Bluetooth. Usá Chrome (Android o PC).', 'var(--warn)'); return; }
+      try {
+        mostrarAviso('Buscando dispositivo...', '');
+        device = await navigator.bluetooth.requestDevice({ filters: [{ services: [SVC] }], optionalServices: [SVC] });
+        device.addEventListener('gattserverdisconnected', () => { log('Desconectado.'); setEstado(false); });
+        const server = await conectarGatt(device);
+        const svc = await server.getPrimaryService(SVC);
+        chStatus  = await svc.getCharacteristic(CH_STATUS);
+        chCommand = await svc.getCharacteristic(CH_COMMAND);
+        chData    = await svc.getCharacteristic(CH_DATA);
+        await chData.startNotifications();
+        chData.addEventListener('characteristicvaluechanged', onData);
+        setEstado(true);
+        mostrarAviso('', '');
+        log('Conectado.');
+        await pedirLista();
+        await sleep(400);
+        await pedirConfig();
+      } catch (e) {
+        mostrarAviso('❌ No se pudo conectar: ' + e.message +
+          '  → En Windows: Configuración › Bluetooth › ESP32-FLIGHT › "Quitar dispositivo". Verificá que el celular NO esté conectado al ESP.', 'var(--err)');
+        log('Error: ' + e.message);
+      }
+    }
+    function cerrarSesion() {
+      if (device && device.gatt.connected) device.gatt.disconnect();
+      conectadoBT = false; modoArchivo = false;
+      flights = []; registros = []; selectedId = null; vuelosCache = {};
+      $('detalle').classList.add('hidden'); $('cargando').classList.add('hidden');
+      renderLista();
+      configurarUISesion();
+    }
+
+    // ---- Recepción de datos por DATA ----
+    function onData(e) {
+      const txt = dec.decode(e.target.value).trim();
+      switch (txt) {
+        case 'FLIGHTS_START': modo = 'list';   flightsTmp = []; return;
+        case 'FLIGHTS_END':   flights = flightsTmp.slice(); renderLista(); log(`Lista: ${flights.length} vuelos`); if (!borrandoTodos) pedirFS(); if (resolverLista) { const r = resolverLista; resolverLista = null; r(); } return;  // refresca memoria; resuelve borrado en cadena
+        case 'START':         modo = 'flight'; registros = []; motivoTmp = 0; actualizarProgreso(); return;
+        case 'END':           $('cargando').classList.add('hidden'); vuelosCache[selectedId] = registros.slice(); motivoCache[selectedId] = motivoTmp; renderDetalle(); log(`Vuelo ${selectedId}: ${registros.length} registros`); if (resolverDescarga) { const r = resolverDescarga; resolverDescarga = null; r(); } return;
+        case 'CFG_START':     modo = 'cfg';    cfg = {}; return;
+        case 'CFG_END':
+          renderConfig(); log('Configuración recibida (' + Object.keys(cfg).length + ' campos)');
+          // Si llegó incompleto (drop BLE de las últimas líneas — VERSION es de las
+          // últimas), re-pide GETCFG UNA vez. Recupera el config sin reconectar.
+          if (!cfg.VERSION && conectadoBT && !cfgReintentado) {
+            cfgReintentado = true;
+            log('⚠️ GETCFG incompleto (drop BLE) → reintentando…');
+            setTimeout(() => enviar('GETCFG').catch(() => {}), 500);
+          }
+          return;
+        case 'BARO_START':    modo = 'baro';   baroData = {}; return;
+        case 'BARO_END':      renderBaro(); log('Barómetro consultado'); return;
+        case 'PWM_START':     modo = 'pwm';    pwmData = {}; return;
+        case 'PWM_END':       renderPwm(pwmData); return;
+        case 'FS_START':      modo = 'fs';     fsData = {}; return;
+        case 'FS_END':        renderFS(fsData); return;
+      }
+      if (txt.startsWith('PWMLIVE:')) { renderPwmLive(txt.substring(8)); return; }
+      if (modo === 'flight' && txt.startsWith('MOTIVO:')) { motivoTmp = +txt.substring(7) || 0; return; }
+      if (modo === 'list') {
+        const p = txt.split(',');            // id,registros,duracion
+        if (p.length >= 3) flightsTmp.push({ id: +p[0], n: +p[1], dur: +p[2] });
+      } else if (modo === 'flight') {
+        const p = txt.split(',');            // tiempo,altura[,pwm_in,pwm_out]
+        if (p.length >= 4) { registros.push({ t: +p[0], a: +p[1], pwmIn: +p[2], pwmOut: +p[3] }); actualizarProgreso(); }
+        else if (p.length === 2) { registros.push({ t: +p[0], a: +p[1] }); actualizarProgreso(); }  // vuelos viejos
+      } else if (modo === 'cfg') {
+        const i = txt.indexOf(':');          // CLAVE:valor
+        if (i > 0) cfg[txt.substring(0, i)] = txt.substring(i + 1);
+      } else if (modo === 'baro') {
+        const i = txt.indexOf(':');
+        if (i > 0) baroData[txt.substring(0, i)] = txt.substring(i + 1);
+      } else if (modo === 'pwm') {
+        const i = txt.indexOf(':');
+        if (i > 0) pwmData[txt.substring(0, i)] = txt.substring(i + 1);
+      } else if (modo === 'fs') {
+        const i = txt.indexOf(':');
+        if (i > 0) fsData[txt.substring(0, i)] = txt.substring(i + 1);
+      }
+    }
+
+    // ---- Acciones ----
+    async function pedirLista() { try { await enviar('LIST'); } catch (e) { log('Error LIST: ' + e.message); } }
+    async function pedirConfig() { try { await enviar('GETCFG'); } catch (e) { log('Error GETCFG: ' + e.message); } }
+    async function pedirFS() { if (!conectadoBT) return; try { await enviar('GETFS'); } catch (e) { log('Error GETFS: ' + e.message); } }
+
+    // --- Memoria de vuelos (LittleFS) — solo informativo ---
+    const fmtKB = b => (b >= 1024 * 1024) ? (b / 1024 / 1024).toFixed(1) + ' MB' : Math.round(b / 1024) + ' KB';
+    const FS_AVISO_PCT = 80;   // umbral de aviso "memoria llenándose"
+    function renderFS(d) {
+      if (modoArchivo) { $('fsBox').classList.add('hidden'); return; }   // en archivo no hay placa
+      const total = +d.TOTAL || 0, usado = +d.USADO || 0;
+      actualizarBtnBorrarTodos();
+      if (total <= 0) {   // FS no montado (placa nueva o sin formato nuevo) → formatear con FORMAT
+        $('fsBar').style.width = '0%';
+        $('fsBar').style.background = 'var(--acc)';
+        $('fsTxt').style.color = '';
+        $('fsTxt').textContent = 'Sistema de archivos sin montar — formatear una vez con el comando FORMAT (Monitor Serie).';
+        $('fsBox').classList.remove('hidden');
+        return;
+      }
+      const pct = (d.PCT !== undefined) ? +d.PCT : Math.round(usado * 100 / total);
+      const lleno = pct >= FS_AVISO_PCT;
+      $('fsBar').style.width = Math.min(100, pct) + '%';
+      $('fsBar').style.background = lleno ? 'var(--warn)' : 'var(--acc)';
+      $('fsTxt').style.color = lleno ? 'var(--warn)' : '';
+      $('fsTxt').textContent = `${lleno ? '⚠️ ' : ''}${fmtKB(usado)} usados / ${fmtKB(total)} (${pct}%)`;
+      $('fsBox').classList.remove('hidden');
+      // Aviso emergente una sola vez por sesión al cruzar el umbral
+      if (lleno && !fsAvisoLleno) {
+        fsAvisoLleno = true;
+        alert(`⚠️ La memoria de vuelos está al ${pct}%.\nConviene descargar los vuelos que necesites y borrarlos para liberar espacio.`);
+      } else if (!lleno) {
+        fsAvisoLleno = false;   // rearmar el aviso si vuelve a bajar (ej. tras borrar)
+      }
+    }
+    // --- PWM del receptor (debug) ---
+    function renderPwm(d) {
+      const sig = d.SENAL || 'NO';
+      const min = (d.MIN && d.MIN !== '0') ? (d.MIN + ' µs') : '— (sin calibrar)';
+      let html = `<div>Señal: <b>${sig}</b></div>`;
+      if (sig === 'SI') {
+        html += `<div>PWM filtrado: <b>${d.US || '–'}</b> µs</div>`;
+        html += `<div>Último valor de la radio: <b>${d.CRUDO || '–'}</b> µs</div>`;
+        html += `<div>Pulsos consecutivos: <b>${d.CONSEC || '0'}</b></div>`;
+      } else {
+        html += `<div style="opacity:.7">Sin lecturas válidas del receptor.</div>`;
+      }
+      html += `<div>Mínimo calibrado (ventana): <b>${min}</b></div>`;
+      $('pwmInfo').innerHTML = html;
+    }
+    function renderPwmLive(s) {
+      const p = s.split(',');
+      const sig = p[1] || 'NO';
+      // Solo muestra el valor de PWM si hay señal real; si no, solo "Señal: NO".
+      let html = `<div>🔴 <b>EN VIVO</b> · Señal: <b>${sig}</b>`;
+      if (sig === 'SI' && p[0]) html += ` · PWM: <b>${p[0]}</b> µs`;
+      html += `</div>`;
+      $('pwmInfo').innerHTML = html;
+    }
+    async function pedirPwm() {
+      $('pwmInfo').innerHTML = '<span class="hint">Leyendo PWM…</span>';
+      try { await enviar('GETPWM'); } catch (e) { log('Error GETPWM: ' + e.message); }
+    }
+    async function togglePwmMon() {
+      pwmMonOn = !pwmMonOn;
+      $('btnPwmMon').textContent = pwmMonOn ? '⏹️ Detener monitor' : '▶️ Monitor PWM en vivo';
+      if (pwmMonOn) $('pwmInfo').innerHTML = '<span class="hint">Esperando lecturas (cada 1 s)…</span>';
+      try { await enviar('PWMMON:' + (pwmMonOn ? '1' : '0')); }
+      catch (e) { log('Error PWMMON: ' + e.message); pwmMonOn = false; $('btnPwmMon').textContent = '▶️ Monitor PWM en vivo'; }
+    }
+    function reflejarDebug() {
+      $('btnDebug').textContent = debugOn ? '⏹️ Desactivar debug Serial' : '🐞 Activar debug Serial';
+      const est = $('debugEstado');
+      est.textContent = debugOn ? 'ACTIVADO' : 'DESACTIVADO';
+      est.style.color = debugOn ? 'var(--warn)' : 'var(--muted)';
+      $('debugBanner').classList.toggle('hidden', !debugOn);
+    }
+    async function toggleDebug() {
+      debugOn = !debugOn;
+      reflejarDebug();
+      try { await enviar('DEBUG:' + (debugOn ? '1' : '0')); }
+      catch (e) { log('Error DEBUG: ' + e.message); debugOn = false; reflejarDebug(); }
+    }
+
+    async function pedirBaro() {
+      $('baroInfo').innerHTML = '<span class="hint">Leyendo barómetro…</span>';
+      try { await enviar('GETBARO'); } catch (e) { log('Error GETBARO: ' + e.message); }
+    }
+    function renderBaro() {
+      const b = baroData;
+      let html = `<div>Estado: <b>${b.ESTADO || '–'}</b></div>`;
+      html += `<div>Tipo: <b>${b.MODELO || '–'}</b></div>`;
+      if (b.TEMP !== undefined) {
+        html += `<div>Temperatura: <b>${b.TEMP} °C</b></div>`;
+        html += `<div>Presión: <b>${b.PRESION} hPa</b></div>`;
+        html += `<div>Altura (relativa al encendido): <b>${b.ALTITUD} m</b></div>`;
+      }
+      $('baroInfo').innerHTML = html;
+    }
+
+    // ---- Buscar actualizaciones (compara contra version.json publicado) ----
+    // Se lee del repo PÚBLICO F5LControl (raw.githubusercontent, rama main sin "/").
+    // Al ser público, el fetch del navegador anda con CORS `*` desde cualquier origen
+    // (incluye repo de código DataloguerEsp32 privado: acá NO se toca). Mantener el
+    // version.json de ese repo al día en cada release.
+    const REPO_VERSION_URL =
+      'https://raw.githubusercontent.com/drsistemas01/F5LControl/main/docs/version.json';
+
+    function cmpVer(a, b) {                     // 1 si a>b, -1 si a<b, 0 iguales
+      const pa = String(a).split('.').map(n => parseInt(n, 10) || 0);
+      const pb = String(b).split('.').map(n => parseInt(n, 10) || 0);
+      const n = Math.max(pa.length, pb.length);
+      for (let i = 0; i < n; i++) {
+        const va = pa[i] || 0, vb = pb[i] || 0;
+        if (va > vb) return 1;
+        if (va < vb) return -1;
+      }
+      return 0;
+    }
+    // Etiqueta humana de tipo/urgencia (version.json) -> {txt, color} o null
+    function etiquetaCambio(parte) {
+      if (!parte) return null;
+      const TIPO = {
+        seguridad:  { t: '🔒 Seguridad',  c: 'var(--warn)' },
+        correccion: { t: '🔧 Corrección', c: 'var(--fg)'  },
+        mejora:     { t: '✨ Mejora',      c: 'var(--fg)'  },
+        menor:      { t: '· Cambio menor', c: 'var(--muted)' },
+      };
+      const URG = {
+        urgente:     'actualizá cuanto antes',
+        recomendada: 'conviene actualizar',
+        opcional:    'podés actualizar cuando quieras',
+      };
+      const tp = TIPO[parte.tipo] || null;
+      const ur = URG[parte.urgencia] || null;
+      if (!tp && !ur) return null;
+      const txt = [tp && tp.t, ur].filter(Boolean).join(' — ');
+      // el color lo manda el tipo; si es urgente, siempre en color de aviso
+      const color = parte.urgencia === 'urgente' ? 'var(--warn)' : (tp ? tp.c : 'var(--muted)');
+      return { txt, color };
+    }
+    // Estado local vs remoto: {txt, color}
+    function estadoVer(local, remoto) {
+      if (!local || local === 'desconocida') return { txt: 'conectá el equipo para comparar', color: 'var(--muted)' };
+      if (!remoto) return { txt: 'sin dato en el repo', color: 'var(--muted)' };
+      const c = cmpVer(remoto, local);
+      if (c > 0) return { txt: `hay actualización (${local} → ${remoto})`, color: 'var(--warn)' };
+      if (c < 0) return { txt: `tu versión es más nueva (${local})`, color: 'var(--muted)' };
+      return { txt: `al día (${local})`, color: 'var(--ok)' };
+    }
+    // Bloque de una parte (FW o Web): estado + fecha + notas (notas por textContent = sin XSS)
+    function bloqueUpd(titulo, local, parte) {
+      const st = estadoVer(local, parte && parte.version);
+      const div = document.createElement('div');
+      div.style.marginTop = '4px';
+      const l1 = document.createElement('div');
+      l1.innerHTML = `${titulo}: <b style="color:${st.color}">${st.txt}</b>` +
+                     (parte && parte.fecha ? ` <span style="opacity:.6;font-size:.78rem">(${parte.fecha})</span>` : '');
+      div.appendChild(l1);
+      // etiqueta tipo/urgencia solo si hay actualización disponible
+      const hayUpd = local && local !== 'desconocida' && parte && cmpVer(parte.version, local) > 0;
+      const et = hayUpd ? etiquetaCambio(parte) : null;
+      if (et) {
+        const le = document.createElement('div');
+        le.style.cssText = `font-size:.78rem;margin-left:2px;color:${et.color};font-weight:600`;
+        le.textContent = et.txt;
+        div.appendChild(le);
+      }
+      if (parte && parte.notas) {
+        const l2 = document.createElement('div');
+        l2.style.cssText = 'opacity:.8;font-size:.78rem;margin-left:2px';
+        l2.textContent = '↳ ' + parte.notas;
+        div.appendChild(l2);
+      }
+      return div;
+    }
+    async function buscarActualizaciones() {
+      const box = $('updateInfo');
+      box.textContent = 'Buscando actualizaciones…';
+      try {
+        const r = await fetch(REPO_VERSION_URL + '?t=' + Date.now(), { cache: 'no-store' });
+        if (!r.ok) throw new Error('no se pudo leer version.json (' + r.status + ')');
+        const remoto = await r.json();
+        box.innerHTML = '';
+        box.appendChild(bloqueUpd('Web', WEB_VERSION, remoto.web));
+        box.appendChild(bloqueUpd('FW',  cfg.VERSION, remoto.fw));   // cfg.VERSION viene de GETCFG (solo con BT)
+      } catch (e) {
+        box.textContent = 'No se pudo comprobar: ' + e.message;
+      }
+    }
+
+    function renderConfig() {
+      $('cfgPiloto').value = cfg.PILOTO || '';
+      $('cfgModelo').value = cfg.MODELO || '';
+      $('cfgBtNombre').value = cfg.BTNOMBRE || '';
+      $('cfgMuestreo').value = cfg.MUESTREO || '1.0';
+      $('cfgCpu').value = cfg.CPUMHZ || '80';
+      $('cfgPinIn').value  = cfg.PINPWMIN  || '3';
+      $('cfgPinEsc').value = cfg.PINESCOUT || '4';
+      validarPines();
+      $('cfgAltCorte').textContent = cfg.ALTCORTE || '–';
+      $('cfgTMotor').textContent   = cfg.TMOTOR   || '–';
+      $('cfgRearme').textContent   = (cfg.REARME === '1') ? 'Sí' : (cfg.REARME === '0' ? 'No' : '–');
+      $('cfgTbtInfo').textContent  = cfg.TBT || '2';
+      $('cfgVersion').textContent = cfg.VERSION || '–';
+      $('cfgDev').textContent     = cfg.DEV || '–';
+      $('cfgBaro').textContent    = (cfg.BARO || '–') + (cfg.BAROMODELO && cfg.BAROMODELO !== '—' ? ' — ' + cfg.BAROMODELO : '');
+      // Estado del equipo (informativo, snapshot al conectar): barómetro / receptor / pantalla
+      const eeSet = (dot, txt, ok, okStr, noStr) => {
+        $(dot).style.background = ok ? 'var(--ok)' : 'var(--err)';
+        $(txt).textContent = ok ? okStr : noStr;
+      };
+      const baroOk = !!cfg.BARO && cfg.BARO !== '–' && !/no\s*encontrad/i.test(cfg.BARO);
+      const rxOk   = cfg.RXPWM === '1';
+      eeSet('eeBaroDot', 'eeBaro', baroOk,
+            'Detectado' + (cfg.BAROMODELO && cfg.BAROMODELO !== '—' ? ' (' + cfg.BAROMODELO + ')' : ''),
+            'No encontrado');
+      eeSet('eeRxDot', 'eeRx', rxOk, 'Detectado', 'No encontrado');
+      // ARMADO = listo para volar (barómetro + receptor OK); si falta alguno, DESARMADO
+      const armado = baroOk && rxOk;
+      $('eeArmado').textContent = armado ? 'ARMADO' : 'DESARMADO';
+      $('eeArmado').style.color = armado ? 'var(--ok)' : 'var(--warn)';
+      $('cfgLcd').textContent     = (cfg.LCD === '1') ? 'Sí' : (cfg.LCD === '0' ? 'No' : '–');   // soporte OLED
+      $('sub').textContent = cfg.PILOTO ? ('Piloto: ' + cfg.PILOTO) : '';
+      if (cfg.DEBUG !== undefined) { debugOn = (cfg.DEBUG === '1'); reflejarDebug(); }   // estado real del debug (persiste en NVS)
+      // Pantalla (OLED): controles solo si el equipo tiene pantalla (LCD=1)
+      const hayLcd = (cfg.LCD === '1');
+      $('lcdControls').classList.toggle('hidden', !hayLcd);
+      $('lcdNoSoporte').classList.toggle('hidden', hayLcd);
+      $('cfgLcdOn').checked = (cfg.LCDON === '1');
+      if (cfg.LCDALT !== undefined) { $('cfgLcdAlt').value = cfg.LCDALT; $('cfgLcdAltVal').textContent = (+cfg.LCDALT).toFixed(1); }
+      if (typeof chequeoUpdConexion === 'function') chequeoUpdConexion();   // al conectar: compara Web + FW (si hay internet)
+    }
+
+    // Valida que los dos pines no sean el mismo. Devuelve true si están OK.
+    function validarPines() {
+      const vin = $('cfgPinIn').value, vesc = $('cfgPinEsc').value;
+      // No dejar pisar: deshabilita en cada desplegable el pin elegido en el otro.
+      [...$('cfgPinIn').options ].forEach(o => o.disabled = (o.value === vesc));
+      [...$('cfgPinEsc').options].forEach(o => o.disabled = (o.value === vin));
+      const m = $('cfgPinMsg');
+      if (vin === vesc) {   // por si una config vieja los tenía iguales
+        m.textContent = '⚠️ Los dos pines no pueden ser el mismo';
+        m.style.color = 'var(--err)';
+        return false;
+      }
+      m.textContent = ''; return true;
+    }
+
+    // Guarda los pines de forma segura. El firmware rechaza un pin si coincide
+    // con el que YA tiene guardado el otro, así que ante un intercambio se
+    // "estaciona" el ESC en un pin libre antes de reasignar (evita el rechazo).
+    async function guardarPines(newIn, newEsc) {
+      const valid = [3, 4, 7, 10];
+      const curIn  = parseInt(cfg.PINPWMIN, 10);
+      const curEsc = parseInt(cfg.PINESCOUT, 10);
+      if (newIn === curIn && newEsc === curEsc) return;   // sin cambios
+      const park = valid.find(p => p !== newIn && p !== newEsc && p !== curIn);
+      if (park !== undefined) { await enviar('SET:PINESCOUT:' + park); await sleep(200); }
+      await enviar('SET:PINPWMIN:'  + newIn);  await sleep(200);
+      await enviar('SET:PINESCOUT:' + newEsc); await sleep(200);
+    }
+
+    async function guardarConfig() {
+      const msg = $('cfgMsg');
+      if (!validarPines()) {
+        msg.textContent = '❌ Corregí los pines antes de guardar'; msg.style.color = 'var(--err)';
+        return;
+      }
+      const p = $('cfgPiloto').value.trim();
+      const m = $('cfgModelo').value.trim();
+      let s = parseFloat(($('cfgMuestreo').value || '').replace(',', '.'));
+      if (isNaN(s)) s = 1.0;
+      if (s < 0.1) s = 0.1;
+      if (s > 25.5) s = 25.5;
+      s = Math.round(s * 10) / 10;
+      $('cfgMuestreo').value = s.toFixed(1);
+      msg.textContent = 'Guardando…'; msg.style.color = 'var(--muted)';
+      try {
+        await enviar('SET:PILOTO:' + p); await sleep(200);
+        await enviar('SET:MODELO:' + m); await sleep(200);
+        await enviar('SET:BTNOMBRE:' + $('cfgBtNombre').value.trim()); await sleep(200);
+        await enviar('SET:MUESTREO:' + s.toFixed(1)); await sleep(200);
+        await enviar('SET:CPUMHZ:' + $('cfgCpu').value); await sleep(200);
+        await guardarPines(parseInt($('cfgPinIn').value, 10), parseInt($('cfgPinEsc').value, 10));
+        await pedirConfig();
+        msg.textContent = '✅ Guardado correctamente'; msg.style.color = 'var(--ok)';
+        setTimeout(() => { msg.textContent = ''; }, 3000);
+      } catch (e) {
+        msg.textContent = '❌ Error al guardar: ' + e.message; msg.style.color = 'var(--err)';
+        log('Error guardando config: ' + e.message);
+      }
+    }
+
+    async function seleccionarVuelo(id) {
+      selectedId = id;
+      renderLista();
+      if (vuelosCache[id]) {                 // ya lo tenemos (archivo o descargado antes)
+        registros = vuelosCache[id].slice();
+        esperados = registros.length;
+        renderDetalle();
+        return;
+      }
+      if (modoArchivo) return;               // en archivo todo debería estar en caché
+      registros = [];
+      const f = flights.find(x => x.id === id);
+      esperados = f ? f.n : 0;
+      $('detalle').classList.add('hidden');
+      $('cargBar').style.width = '0%';
+      $('cargTxt').textContent = 'Obteniendo datos…';
+      $('cargando').classList.remove('hidden');
+      try {
+        await enviar('DOWNLOAD:' + id);
+      } catch (e) {
+        log('Error DOWNLOAD: ' + e.message);
+        $('cargando').classList.add('hidden');
+      }
+    }
+
+    async function borrarVuelo(id) {
+      if (!confirm(`¿Borrar el Vuelo ${id}? Esta acción no se puede deshacer.`)) return;
+      try {
+        await enviar('DELETE:' + id);        // el ESP responde con la lista actualizada
+        delete vuelosCache[id];
+        if (selectedId === id) { selectedId = null; registros = []; $('detalle').classList.add('hidden'); }
+      } catch (e) { log('Error DELETE: ' + e.message); }
+    }
+
+    // Botón "Borrar todos": siempre visible con placa conectada; gris/deshabilitado si no hay vuelos.
+    function actualizarBtnBorrarTodos() {
+      const b = $('btnBorrarTodos');
+      const hay = flights.length > 0;
+      b.disabled = !hay;
+      b.title = hay ? 'Borra todos los vuelos guardados' : 'No hay vuelos para borrar';
+    }
+
+    // Borra TODOS los vuelos (uno por uno, esperando la respuesta de cada uno).
+    function esperarLista() {   // se resuelve al llegar FLIGHTS_END o por timeout
+      return new Promise(res => {
+        resolverLista = res;
+        setTimeout(() => { if (resolverLista) { resolverLista = null; res(); } }, 5000);
+      });
+    }
+    async function borrarTodos() {
+      if (!conectadoBT) return;
+      const ids = flights.map(f => f.id);
+      if (ids.length === 0) { alert('No hay vuelos para borrar.'); return; }
+      if (!confirm(`Se van a borrar TODOS los vuelos (${ids.length}).\nEsta acción NO se puede deshacer. ¿Continuar?`)) return;
+      const btn = $('btnBorrarTodos');
+      btn.disabled = true;
+      borrandoTodos = true;
+      try {
+        for (const id of ids) {
+          const p = esperarLista();              // el ESP responde con la lista actualizada
+          try { await enviar('DELETE:' + id); } catch (e) { log('Error DELETE ' + id + ': ' + e.message); }
+          await p;
+          delete vuelosCache[id];
+        }
+        selectedId = null; registros = [];
+        $('detalle').classList.add('hidden');
+        log('Borrados todos los vuelos');
+      } finally {
+        borrandoTodos = false;
+        btn.disabled = false;
+        pedirFS();   // una sola actualización de memoria al final
+      }
+    }
+
+    // ---- Render ----
+    function renderLista() {
+      const sel = $('selVuelo');
+      actualizarBotonesExport();
+      actualizarBtnBorrarTodos();
+      if (flights.length === 0) {
+        sel.innerHTML = '<option value="">— sin vuelos —</option>';
+        return;
+      }
+      flights.sort((a, b) => b.id - a.id);   // descendente: el más reciente primero
+      const opts = ['<option value="">— elegí un vuelo —</option>'];
+      flights.forEach(f => {
+        opts.push(`<option value="${f.id}">Vuelo ${f.id}  ·  ${f.n} reg  ·  ${f.dur} s</option>`);
+      });
+      sel.innerHTML = opts.join('');
+      if (selectedId != null && flights.some(f => f.id === selectedId)) sel.value = String(selectedId);
+    }
+
+    // Texto del motivo de corte (índice del enum del firmware)
+    function motivoTxt(n) {
+      return ['','Corte por acelerador','Corte por tiempo','Corte por altura','Corte por señal','Corte por sensor'][n] || 'Corte de motor';
+    }
+    function renderDetalle() {
+      if (!registros.length) { $('detalle').classList.add('hidden'); return; }
+      motivoActual = motivoCache[selectedId] || 0;   // motivo del 1er corte (de la cabecera del vuelo)
+      const max = Math.max(...registros.map(r => r.a));
+      $('dTitulo').textContent = `Vuelo ${selectedId}`;
+      $('stMax').textContent = max;   // stDur/stDurLbl los setea dibujarGrafico (tiempo de vuelo o duración)
+      // "Limpiar zona muerta" y "Colorear por motor" arrancan ACTIVOS (checked por
+      // defecto) y respetan la elección del usuario entre vuelos (no se resetean acá).
+      tView = null;               // el recorte lo aplica dibujarGrafico según chkZona
+      dibujarGrafico();
+      $('detalle').classList.remove('hidden');
+    }
+
+    // Escala "linda" para un eje: min/max redondeados + paso (números redondos).
+    function niceNum(x, round) {
+      if (x <= 0) return 1;
+      const exp = Math.floor(Math.log10(x));
+      const f = x / Math.pow(10, exp);
+      let nf;
+      if (round) nf = f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10;
+      else       nf = f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10;
+      return nf * Math.pow(10, exp);
+    }
+    function escalaLinda(min, max, nticks) {
+      const rango = niceNum(max - min, false);
+      const step  = niceNum(rango / Math.max(1, nticks - 1), true);
+      return { min: Math.floor(min / step) * step, max: Math.ceil(max / step) * step, step };
+    }
+
+    // Tolerancia (m) para el fin de la trepada por inercia (anti-ruido del baró).
+    const ZOOM_TOL_M = 0.2;
+    // Detección de aterrizaje (tiempo de vuelo en planeo): "quieto cerca del piso".
+    // Detección del ATERRIZAJE por forma de la curva (descenso sostenido → estabilización).
+    // NO depende de altura=0 (el baró tiene ruido/deriva). Todo configurable (code, no UI).
+    const LAND_STABLE_S        = 2.5;  // ventana estable para confirmar aterrizaje (s)
+    const LAND_STABLE_TOL_M    = 0.3;  // variación máx (máx-mín) permitida en la ventana estable (m)
+    const LAND_COHERENCE_M     = 1.5;  // el nivel estable debe estar ≤ (mínimo del planeo + esto) para ser "suelo"
+    const LAND_DESC_LOOKBACK_S = 10;   // ventana hacia atrás en la que el avión tuvo que venir de MÁS ARRIBA (s)
+    const LAND_DESCENT_MIN_M   = 2.0;  // cuánto más arriba (m) estuvo en ese lookback → confirma descenso (no vuelo nivelado)
+    const LAND_STAYS_DOWN_M    = 5.0;  // tras aterrizar NO vuelve a subir más de esto sobre el nivel (evita low pass / térmica)
+    // Detección del LANZAMIENTO (inicio de vuelo estimado): ascenso real y sostenido
+    // buscado SOLO dentro del tramo con motor encendido. Configurables (code, no UI).
+    const LAUNCH_DH_MIN_M = 0.8;  // incremento acumulado mínimo de altura para confirmar el ascenso (m)
+    const LAUNCH_N_SUBEN  = 2;    // muestras consecutivas subiendo para confirmar (evita 1 muestra de ruido)
+    // Colores de las series del gráfico (fondo blanco)
+    const GC = { alt: '#ff9d3c', fill: 'rgba(255,175,95,0.30)', pin: '#e11d1d', pout: '#1f6fe0',
+                 violeta: '#a855f7', verde: '#2ec25a', rojo: '#ff4d4d',
+                 axAlt: '#d9822b', ax: '#888', txt: '#555', grid: '#e6e6e6', line: '#bbb' };
+
+    // Segundos -> "M' SS\"" (minutos y segundos). Ej: 390 -> 6' 30"
+    function mmss(seg) {
+      const t = Math.max(0, Math.round(seg));
+      const m = Math.floor(t / 60), s = t % 60;
+      return m + "' " + String(s).padStart(2, '0') + '"';
+    }
+    // Analiza el vuelo desde los datos: 1er arranque de motor, 1er corte, aterrizaje
+    // y tiempo de vuelo en planeo (corte→aterrizaje). Única fuente para la stat de
+    // arriba, la línea verde de aterrizaje y el recorte de "zona muerta".
+    // Mediana de un array de números (para el nivel de suelo dinámico).
+    function medianaArr(arr) {
+      const a = arr.slice().sort((x, y) => x - y);
+      const n = a.length; if (!n) return 0;
+      return (n % 2) ? a[(n - 1) / 2] : (a[n / 2 - 1] + a[n / 2]) / 2;
+    }
+    // Regresión lineal (mínimos cuadrados) de altura vs tiempo sobre regs[i0..i1] → {m, b} de a = m·t + b.
+    function regresionLineal(regs, i0, i1) {
+      let n = 0, sx = 0, sy = 0, sxx = 0, sxy = 0;
+      for (let k = i0; k <= i1; k++) { const x = regs[k].t, y = regs[k].a; n++; sx += x; sy += y; sxx += x * x; sxy += x * y; }
+      const den = n * sxx - sx * sx;
+      if (n < 2 || Math.abs(den) < 1e-9) return { m: 0, b: n ? sy / n : 0 };
+      const m = (n * sxy - sx * sy) / den;
+      return { m, b: (sy - m * sx) / n };
+    }
+    function analizarVuelo(regs) {
+      const tienePwm = regs.some(r => r.pwmOut !== undefined);
+      const UM = (cfg && +cfg.UMBRALMOTOR) ? +cfg.UMBRALMOTOR : 1100;
+      let motorStartIdx = -1, cutIdx = -1, prevOn = false;
+      if (tienePwm) for (let i = 0; i < regs.length; i++) {
+        const on = regs[i].pwmOut !== undefined && regs[i].pwmOut > UM;
+        if (on && motorStartIdx < 0) motorStartIdx = i;      // 1er arranque
+        if (!on && prevOn && cutIdx < 0) cutIdx = i;          // 1er corte (ON→OFF)
+        prevOn = on;
+      }
+      // --- ATERRIZAJE estimado (fin del vuelo): descenso sostenido → estabilización ---
+      // NO usa altura=0. Busca (después del corte) la 1ra VENTANA ESTABLE (>= LAND_STABLE_S,
+      // variación < LAND_STABLE_TOL_M) que además: (a) esté cerca del mínimo del planeo
+      // (coherencia con el suelo final), y (b) venga precedida por un DESCENSO claro (drop y
+      // velocidad vertical mínimos) → evita confundir vuelo nivelado con aterrizaje. El contacto
+      // se interpola: cruce de la recta de descenso con el nivelSueloFinal, aceptado solo si cae
+      // DENTRO del intervalo [última muestra en descenso .. 1ra estable]; si no, punto medio.
+      let landIdx = -1, aterrizajeConfiable = false, tAterrizaje = null, nivelSueloFinal = null;
+      if (cutIdx >= 0 && cutIdx < regs.length - 1) {
+        const N = regs.length;
+        let gndMin = Infinity;                         // mínimo de altura durante el planeo
+        for (let i = cutIdx; i < N; i++) if (regs[i].a < gndMin) gndMin = regs[i].a;
+        for (let i = cutIdx + 1; i < N; i++) {
+          // ventana estable [i..j] que CUBRA al menos LAND_STABLE_S (incluye la 1ra muestra que la alcanza)
+          let j = i, mn = regs[i].a, mx = regs[i].a;
+          while (j + 1 < N && regs[j].t - regs[i].t < LAND_STABLE_S) {
+            j++; if (regs[j].a < mn) mn = regs[j].a; if (regs[j].a > mx) mx = regs[j].a;
+          }
+          if (regs[j].t - regs[i].t < LAND_STABLE_S - 1e-6) break;   // fin de datos: no cubre la ventana
+          if ((mx - mn) > LAND_STABLE_TOL_M) continue;               // no es estable
+          const nivel = medianaArr(regs.slice(i, j + 1).map(r => r.a));
+          if (nivel > gndMin + LAND_COHERENCE_M) continue;           // coherencia: debe ser el suelo, no un nivelado alto
+          // descenso confirmado por LOOKBACK: en los últimos LAND_DESC_LOOKBACK_S s el avión
+          // estuvo MÁS ARRIBA (>= LAND_DESCENT_MIN_M sobre el nivel). Tolera un descenso final
+          // suave y el ruido del baró; con la coherencia evita confundir vuelo nivelado.
+          let p = i - 1, hiPre = -Infinity;
+          while (p >= cutIdx && regs[i].t - regs[p].t <= LAND_DESC_LOOKBACK_S) { if (regs[p].a > hiPre) hiPre = regs[p].a; p--; }
+          p = Math.max(cutIdx, p + 1);                               // 1er índice del lookback
+          if (hiPre - nivel < LAND_DESCENT_MIN_M) continue;          // no venía de más arriba -> no es aterrizaje
+          // "se queda en el piso": después NO vuelve a subir (descarta low pass / re-térmica)
+          let subeDespues = false;
+          for (let k = i; k < N; k++) if (regs[k].a > nivel + LAND_STAYS_DOWN_M) { subeDespues = true; break; }
+          if (subeDespues) continue;
+          // --- contacto: cruce de la recta de descenso (lookback) con nivelSueloFinal ---
+          const tA = regs[i - 1].t, tB = regs[i].t;                  // intervalo de transición descenso→estable
+          let tContacto = (tA + tB) / 2;                             // fallback: punto medio (no extrapolar)
+          if (i - 1 - p >= 1) {
+            const fit = regresionLineal(regs, p, i - 1);             // recta del descenso previo (lookback)
+            if (fit.m < -1e-6) {
+              const tCross = (nivel - fit.b) / fit.m;
+              if (tCross >= tA - 1e-6 && tCross <= tB + 1e-6) tContacto = tCross;   // solo si cae dentro del intervalo
+            }
+          }
+          tAterrizaje = tContacto; nivelSueloFinal = nivel; aterrizajeConfiable = true;
+          landIdx = (Math.abs(regs[i - 1].t - tContacto) <= Math.abs(regs[i].t - tContacto)) ? i - 1 : i;
+          break;
+        }
+        if (!aterrizajeConfiable) { landIdx = N - 1; tAterrizaje = regs[N - 1].t; }   // fallback: última muestra (sin marca)
+      }
+
+      // --- LANZAMIENTO estimado (inicio de vuelo) ---
+      // Según F5L el vuelo empieza cuando el modelo deja la mano (no al encender el motor).
+      // Se busca SOLO dentro del tramo con motor encendido (motorStartIdx .. corte/fin) la
+      // 1ra corrida de >= LAUNCH_N_SUBEN muestras consecutivas subiendo, con incremento
+      // acumulado >= LAUNCH_DH_MIN_M. El lanzamiento cae ENTRE la última muestra en tierra
+      // (i-1) y la primera del ascenso (i) → punto medio temporal. Usa los t reales (sirve
+      // con intervalos no constantes). No modifica los datos del log.
+      let launchDetectado = false, tLaunch = null;
+      if (motorStartIdx >= 0) {
+        const finMotor = (cutIdx >= 0) ? cutIdx : regs.length;   // exclusivo
+        for (let i = motorStartIdx + 1; i < finMotor; i++) {
+          if (regs[i].a <= regs[i - 1].a) continue;              // busca el comienzo de una subida
+          let k = i, acum = 0, n = 0;                            // extiende la corrida mientras suba
+          while (k < finMotor && regs[k].a > regs[k - 1].a) { acum += regs[k].a - regs[k - 1].a; n++; k++; }
+          if (n >= LAUNCH_N_SUBEN && acum >= LAUNCH_DH_MIN_M) {
+            tLaunch = (regs[i - 1].t + regs[i].t) / 2;           // últimaSuelo (i-1) + primeraAscenso (i) /2
+            launchDetectado = true;
+            break;
+          }
+          i = k - 1;                                             // saltar la corrida ya evaluada
+        }
+      }
+      // Referencia de inicio del tiempo de vuelo: lanzamiento si se detectó; si no, FALLBACK
+      // al 1er arranque de motor (para no romper el análisis; sin marca de "Inicio de vuelo").
+      const tLaunchRef = launchDetectado ? tLaunch
+                       : (motorStartIdx >= 0 ? regs[motorStartIdx].t : null);
+      const tVueloEst = (tAterrizaje != null && tLaunchRef != null) ? tAterrizaje - tLaunchRef : null;   // lanzamiento → aterrizaje
+      const tMotor    = (motorStartIdx >= 0 && cutIdx >= 0) ? regs[cutIdx].t - regs[motorStartIdx].t : null;  // encendido → corte
+
+      return { tienePwm, UM, motorStartIdx, cutIdx, landIdx,
+               aterrizajeConfiable, tAterrizaje, nivelSueloFinal,
+               launchDetectado, tLaunch, tLaunchRef, tVueloEst, tMotor };
+    }
+
+    // "Limpiar zona muerta": el recorte lo aplica dibujarGrafico vía el rango BASE
+    // (baseLo/baseHi según el tilde). Reseteamos la vista para que tome ese base.
+    function aplicarZonaMuerta() {
+      tView = null;
+      dibujarGrafico();
+    }
+
+    function dibujarGrafico() {
+      const g = $('grafico');
+      if (registros.length < 2) { g.innerHTML = ''; chartMap = null; return; }
+
+      const tienePwm = registros.some(r => r.pwmOut !== undefined);
+      // Qué series se dibujan (las de PWM sólo si el vuelo tiene datos de PWM)
+      const showAlt  = serieVis.alt;
+      const showPin  = serieVis.pin  && tienePwm;
+      const showPout = serieVis.pout && tienePwm;
+      const useMotor = serieVis.motor && tienePwm && showAlt;
+      const hayPwmEje = showPin || showPout;
+
+      const W = 340, H = 270, mL = 30, mR = hayPwmEje ? 34 : 12, mT = 10, mB = 24;   // H 50% más alto (era 180) para más resolución vertical
+      const plotW = W - mL - mR, plotH = H - mT - mB;
+      const maxTfull = Math.max(...registros.map(r => r.t)) || 1;
+      // Análisis del vuelo (corte/aterrizaje/tiempo) — única fuente
+      vueloInfo = analizarVuelo(registros);
+      // Origen de tiempo: t=0 en el LANZAMIENTO (inicio de vuelo). Si no se detectó,
+      // fallback al 1er arranque de motor. Se resta solo en las ETIQUETAS del eje y el
+      // tooltip (los datos/zoom/recorte siguen en t crudo). El tramo motor-antes-del-
+      // lanzamiento queda en tiempo negativo.
+      const tOffset = (vueloInfo.launchDetectado && vueloInfo.tLaunch != null) ? vueloInfo.tLaunch
+                    : (vueloInfo.motorStartIdx >= 0 ? registros[vueloInfo.motorStartIdx].t : 0);
+      // Stat de arriba: "Tiempo de vuelo estimado" (lanzamiento → aterrizaje). El "~" marca
+      // menor certeza (aterrizaje aproximado o lanzamiento no detectado → fallback al arranque).
+      if (vueloInfo.tVueloEst != null) {
+        $('stDurLbl').textContent = 'Tiempo de vuelo estimado';
+        const v = vueloInfo.tVueloEst;
+        const baja = !vueloInfo.aterrizajeConfiable;                    // aterrizaje no detectado con seguridad
+        const pre  = (baja || !vueloInfo.launchDetectado) ? '~ ' : '';
+        $('stDur').textContent = `${pre}${v.toFixed(1)} s (${mmss(v)})` + (baja ? ' (baja confianza)' : '');
+      } else {
+        $('stDurLbl').textContent = 'Duración';
+        $('stDur').textContent = `${Math.round(maxTfull)} s`;
+      }
+      // Tiempo de motor (encendido → corte), separado del tiempo de vuelo
+      if (vueloInfo.tMotor != null) {
+        $('stMotWrap').classList.remove('hidden');
+        $('stMot').textContent = `${Math.round(vueloInfo.tMotor)} s`;
+      } else {
+        $('stMotWrap').classList.add('hidden');
+      }
+      // Auto-escala del eje Y izquierdo (altura)
+      // Eje Y arranca en 0: NUNCA se muestra zona negativa (la curva se dibuja clampeada a ≥0).
+      // OJO: es SOLO para el dibujo; la detección, altura máx, stats y análisis usan la altura REAL (r.a).
+      let aMin = 0;
+      let aMax = Math.max(...registros.map(r => r.a));
+      if (aMax < 1) aMax = 1;                 // rango mínimo si el vuelo casi no sube
+      const escY = escalaLinda(aMin, aMax, 5);
+      const yMin = Math.max(escY.min, -5), yMax = escY.max, yStep = escY.step;   // piso duro en -5 m
+      const yGrid0 = Math.ceil(yMin / yStep - 1e-9) * yStep;                     // 1ra marca alineada al paso
+      // Eje Y derecho (PWM) fijo 0..2500 µs
+      const pMin = 0, pMax = 2500, pStep = 500;
+      // Rango BASE de tiempo (extremo al que vuelve el zoom/pan/doble-clic). Con
+      // "Limpiar zona muerta" el base ES la ventana recortada [arranque−3s..aterrizaje+3s],
+      // así el recorte persiste aunque hagas zoom (no vuelve a mostrar la zona muerta).
+      let baseLo = 0, baseHi = maxTfull;
+      if ($('chkZona').checked && vueloInfo && vueloInfo.cutIdx >= 0) {
+        const tStart = vueloInfo.motorStartIdx >= 0 ? registros[vueloInfo.motorStartIdx].t : 0;
+        const tLand  = (vueloInfo.tAterrizaje != null) ? vueloInfo.tAterrizaje : maxTfull;   // tiempo interpolado
+        baseLo = Math.max(0, tStart - 3);
+        baseHi = Math.min(maxTfull, tLand + 3);
+      }
+      if (!tView) tView = [baseLo, baseHi];
+      let t0 = tView[0], t1 = tView[1]; if (t1 <= t0) t1 = t0 + 0.1;
+      const X  = t => mL + (t - t0) / (t1 - t0) * plotW;
+      const Y  = a => mT + (1 - (a - yMin) / (yMax - yMin)) * plotH;       // altura
+      const YV = v => mT + (1 - (v - pMin) / (pMax - pMin)) * plotH;       // PWM
+      chartMap = { X, Y, YV, mL, mT, mR, plotW, plotH, t0, t1, maxTfull, baseLo, baseHi, tOffset, W, showAlt, showPin, showPout, tienePwm };
+
+      let svg = `<defs><clipPath id="clip"><rect x="${mL}" y="${mT}" width="${plotW}" height="${plotH}"/></clipPath></defs>`;
+      // Fondo blanco del área del gráfico
+      svg += `<rect x="0" y="0" width="${W}" height="${H}" fill="#ffffff"/>`;
+
+      // Grilla (punteada, gris clara) sobre las marcas de altura y de tiempo
+      for (let v = yGrid0; v <= yMax + 1e-6; v += yStep) {
+        const y = Y(v);
+        svg += `<line x1="${mL}" y1="${y}" x2="${mL + plotW}" y2="${y}" stroke="${GC.grid}" stroke-dasharray="2 3"/>`;
+      }
+      const nTicks = 6, span = t1 - t0;
+      for (let i = 0; i <= nTicks; i++) {
+        const x = X(t0 + span * i / nTicks);
+        svg += `<line x1="${x}" y1="${mT}" x2="${x}" y2="${mT + plotH}" stroke="${GC.grid}" stroke-dasharray="2 3"/>`;
+      }
+
+      // Eje Y izquierdo (altura)
+      if (showAlt) {
+        svg += `<line x1="${mL}" y1="${mT}" x2="${mL}" y2="${mT + plotH}" stroke="${GC.axAlt}" stroke-width="1"/>`;
+        for (let v = yGrid0; v <= yMax + 1e-6; v += yStep) {
+          const y = Y(v);
+          const lbl = yStep < 1 ? v.toFixed(1) : String(Math.round(v));
+          svg += `<line x1="${mL - 2}" y1="${y}" x2="${mL}" y2="${y}" stroke="${GC.axAlt}" stroke-width="0.6"/>`;
+          svg += `<text x="${mL - 4}" y="${y + 3}" text-anchor="end" font-size="7.5" fill="${GC.axAlt}">${lbl}</text>`;
+        }
+        svg += `<text x="4" y="${mT + 5}" font-size="7.5" fill="${GC.axAlt}">m</text>`;
+      }
+
+      // Eje Y derecho (PWM en µs)
+      if (hayPwmEje) {
+        const rx = mL + plotW;
+        svg += `<line x1="${rx}" y1="${mT}" x2="${rx}" y2="${mT + plotH}" stroke="${GC.ax}" stroke-width="1"/>`;
+        for (let v = pMin; v <= pMax + 1e-6; v += pStep) {
+          const y = YV(v);
+          svg += `<line x1="${rx}" y1="${y}" x2="${rx + 2}" y2="${y}" stroke="${GC.ax}" stroke-width="0.6"/>`;
+          svg += `<text x="${rx + 4}" y="${y + 3}" font-size="7" fill="${GC.txt}">${v}</text>`;
+        }
+        svg += `<text x="${rx + 4}" y="${mT + 5}" font-size="7.5" fill="${GC.txt}">µs</text>`;
+      }
+
+      // Eje X (tiempo)
+      svg += `<line x1="${mL}" y1="${mT + plotH}" x2="${mL + plotW}" y2="${mT + plotH}" stroke="${GC.line}" stroke-width="1"/>`;
+      for (let i = 0; i <= nTicks; i++) {
+        const t = t0 + span * i / nTicks, x = X(t);
+        const tr = t - tOffset;   // tiempo relativo al 1er arranque de motor
+        const lbl = span < 10 ? tr.toFixed(1) : String(Math.round(tr));
+        svg += `<line x1="${x}" y1="${mT + plotH}" x2="${x}" y2="${mT + plotH + 3}" stroke="${GC.txt}" stroke-width="0.6"/>`;
+        svg += `<text x="${x}" y="${mT + plotH + 12}" text-anchor="middle" font-size="7.5" fill="${GC.txt}">${lbl}</text>`;
+      }
+      // Marca del CERO (1er arranque de motor) en el eje de tiempo: solo el número "0"
+      if (tOffset >= t0 && tOffset <= t1) {
+        const x0 = X(tOffset);
+        svg += `<line x1="${x0}" y1="${mT + plotH}" x2="${x0}" y2="${mT + plotH + 4}" stroke="${GC.txt}" stroke-width="1"/>`;
+        svg += `<text x="${x0}" y="${mT + plotH + 12}" text-anchor="middle" font-size="8" font-weight="700" fill="${GC.txt}">0</text>`;
+      }
+      svg += `<text x="${mL + plotW}" y="${H - 2}" text-anchor="end" font-size="7.5" fill="${GC.txt}">tiempo (s)</text>`;
+
+      svg += `<g clip-path="url(#clip)">`;
+
+      // Altura: relleno + línea (naranja, o coloreada por motor si está tildado)
+      if (showAlt) {
+        const av = a => (a < 0 ? 0 : a);      // alturaVisual: SOLO para dibujar la curva (≥0); los cálculos usan r.a real
+        const baseY = Math.min(mT + plotH, Math.max(mT, Y(0)));   // relleno hasta la línea de 0 m
+        const area = `${X(registros[0].t)},${baseY} ` +
+                     registros.map(r => `${X(r.t)},${Y(av(r.a))}`).join(' ') +
+                     ` ${X(registros[registros.length - 1].t)},${baseY}`;
+        svg += `<polygon points="${area}" fill="${GC.fill}" stroke="none"/>`;
+        if (useMotor) {
+          const UMBRAL_MOTOR = (cfg && +cfg.UMBRALMOTOR) ? +cfg.UMBRALMOTOR : 1100;
+          const COL = { violeta: GC.violeta, verde: GC.verde, rojo: GC.rojo };
+          let seenFirstOn = false, firstRunOver = false;
+          const color = registros.map(r => {
+            const motor = (r.pwmOut !== undefined) && (r.pwmOut > UMBRAL_MOTOR);
+            if (motor) { seenFirstOn = true; return firstRunOver ? 'rojo' : 'violeta'; }
+            if (seenFirstOn) firstRunOver = true;
+            return 'verde';
+          });
+          const n = registros.length; let ini = 0;
+          for (let i = 0; i < n - 1; i++) {
+            const c = color[i], cNext = (i + 1 < n - 1) ? color[i + 1] : null;
+            if (cNext !== c) {
+              const pts = registros.slice(ini, i + 2).map(r => `${X(r.t)},${Y(av(r.a))}`).join(' ');
+              svg += `<polyline points="${pts}" fill="none" stroke="${COL[c]}" stroke-width="1.6"/>`;
+              ini = i + 1;
+            }
+          }
+        } else {
+          const pts = registros.map(r => `${X(r.t)},${Y(av(r.a))}`).join(' ');
+          svg += `<polyline points="${pts}" fill="none" stroke="${GC.alt}" stroke-width="1.6"/>`;
+        }
+      }
+      // PWM entrada (rojo) y PWM salida (azul)
+      if (showPin) {
+        // pwm_in = 0 es el marcador de "sin señal en esa muestra" (dropout por la
+        // escritura a flash del planeo). Estético: se dibuja como 1000 (failsafe/mín).
+        const pts = registros.map(r => `${X(r.t)},${YV(r.pwmIn === 0 ? 1000 : r.pwmIn)}`).join(' ');
+        svg += `<polyline points="${pts}" fill="none" stroke="${GC.pin}" stroke-width="1.2"/>`;
+      }
+      if (showPout) {
+        const pts = registros.map(r => `${X(r.t)},${YV(r.pwmOut)}`).join(' ');
+        svg += `<polyline points="${pts}" fill="none" stroke="${GC.pout}" stroke-width="1.2"/>`;
+      }
+      svg += `</g>`;
+
+      // --- Corte de motor + veredicto (solo si el vuelo tiene PWM) ---
+      // El 1er corte se ubica por los datos: 1er paso de motor ON (pwm_out>umbral)
+      // a OFF. El rearranque = 2+ tramos de motor ON (=> VUELO NULO por reglas F5L).
+      if (tienePwm) {
+        const UM = (cfg && +cfg.UMBRALMOTOR) ? +cfg.UMBRALMOTOR : 1100;
+        let cutIdx = -1, arranques = 0, prevOn = false;
+        for (let i = 0; i < registros.length; i++) {
+          const on = registros[i].pwmOut !== undefined && registros[i].pwmOut > UM;
+          if (on && !prevOn) arranques++;                 // arranque de motor
+          if (!on && prevOn && cutIdx < 0) cutIdx = i;     // 1er corte (ON->OFF)
+          prevOn = on;
+        }
+        const huboRearranque = arranques >= 2;
+        // Flecha + etiqueta en el 1er corte (si cae dentro de la vista actual)
+        if (cutIdx >= 0) {
+          const xc = X(registros[cutIdx].t);
+          if (xc >= mL - 0.5 && xc <= mL + plotW + 0.5) {
+            svg += `<line x1="${xc}" y1="${mT}" x2="${xc}" y2="${mT + plotH}" stroke="#d11" stroke-width="0.8" stroke-dasharray="3 2"/>`;
+            svg += `<path d="M${xc - 3.2},${mT} L${xc + 3.2},${mT} L${xc},${mT + 5.5} Z" fill="#d11"/>`;
+            const et = motivoTxt(motivoActual);
+            const tw = et.length * 3.6 + 6;
+            let lx = xc + 4; if (lx + tw > mL + plotW) lx = xc - 4 - tw; if (lx < mL) lx = mL + 1;
+            svg += `<rect x="${lx}" y="${mT + 1}" width="${tw}" height="9" rx="2" fill="#fff" opacity="0.85"/>`;
+            svg += `<text x="${lx + 3}" y="${mT + 7.5}" font-size="6.5" font-weight="bold" fill="#d11">${et}</text>`;
+          }
+        }
+        // ZOOM / INERCIA post-corte: desde el 1er corte mide SOLO la trepada
+        // positiva continua. Acumula el máximo mientras sube; termina en la 1ra
+        // BAJADA REAL (> ZOOM_TOL_M del máximo, para no cortar por ruido del baró)
+        // o si el motor vuelve a arrancar (rearranque: NO mezclar tramos).
+        if (cutIdx >= 0 && cutIdx < registros.length - 1) {
+          const aCut = registros[cutIdx].a;
+          let peakA = aCut, peakIdx = cutIdx;
+          for (let i = cutIdx + 1; i < registros.length; i++) {
+            const motorOn = registros[i].pwmOut !== undefined && registros[i].pwmOut > UM;
+            if (motorOn) break;                              // arrancó de nuevo → fin
+            const a = registros[i].a;
+            if (a > peakA) { peakA = a; peakIdx = i; }        // sigue trepando
+            else if (a < peakA - ZOOM_TOL_M) break;          // 1ra bajada real → fin
+          }
+          const zoom = peakA - aCut;
+          const xc = X(registros[cutIdx].t), yc = Y(aCut);
+          const px = X(registros[peakIdx].t), yp = Y(peakA);
+          // punto de CORTE de motor (sobre la curva de altura)
+          if (xc >= mL - 0.5 && xc <= mL + plotW + 0.5)
+            svg += `<circle cx="${xc}" cy="${yc}" r="1.9" fill="#d11" stroke="#fff" stroke-width="0.5"/>`;
+          // punto de FIN de trepada por inercia + línea del zoom + etiqueta
+          if (peakIdx > cutIdx && px >= mL - 0.5 && px <= mL + plotW + 0.5) {
+            svg += `<circle cx="${px}" cy="${yp}" r="1.9" fill="${GC.violeta}" stroke="#fff" stroke-width="0.5"/>`;
+            svg += `<line x1="${px}" y1="${yp}" x2="${px}" y2="${yc}" stroke="${GC.violeta}" stroke-width="0.8" stroke-dasharray="2 2"/>`;
+            const zt = `Zoom +${zoom.toFixed(1)} m`;
+            const zw = zt.length * 3.7 + 6;
+            let zx = px + 4; if (zx + zw > mL + plotW) zx = px - 4 - zw; if (zx < mL) zx = mL + 1;
+            let zy = (yp + yc) / 2 + 3; if (zy < mT + 16) zy = mT + 16; if (zy > mT + plotH - 1) zy = mT + plotH - 1;
+            svg += `<rect x="${zx}" y="${zy - 7}" width="${zw}" height="9" rx="2" fill="#fff" opacity="0.88"/>`;
+            svg += `<text x="${zx + 3}" y="${zy - 0.5}" font-size="6.5" font-weight="bold" fill="${GC.violeta}">${zt}</text>`;
+          }
+        }
+        // ATERRIZAJE: línea + punto verde en el tiempo interpolado — SOLO si es confiable
+        // (si no, no se dibuja para no inventar un punto; la stat lo marca "baja confianza").
+        if (vueloInfo.aterrizajeConfiable && vueloInfo.tAterrizaje != null) {
+          const lx2 = X(vueloInfo.tAterrizaje);
+          const ly2 = Y(Math.max(0, vueloInfo.nivelSueloFinal != null ? vueloInfo.nivelSueloFinal : registros[vueloInfo.landIdx].a));   // punto clampeado a ≥0 (la detección real puede ser negativa)
+          if (lx2 >= mL - 0.5 && lx2 <= mL + plotW + 0.5) {
+            svg += `<line x1="${lx2}" y1="${mT}" x2="${lx2}" y2="${mT + plotH}" stroke="#0a8f6e" stroke-width="0.8" stroke-dasharray="3 2"/>`;
+            svg += `<circle cx="${lx2}" cy="${ly2}" r="1.9" fill="#0a8f6e" stroke="#fff" stroke-width="0.5"/>`;
+          }
+        }
+        // INICIO DE VUELO (lanzamiento estimado): línea + etiqueta — SOLO si se detectó
+        // (si fue fallback al arranque de motor, no se dibuja para no dar una detección falsa).
+        if (vueloInfo.launchDetectado && vueloInfo.tLaunch != null) {
+          const xl = X(vueloInfo.tLaunch);
+          if (xl >= mL - 0.5 && xl <= mL + plotW + 0.5) {
+            svg += `<line x1="${xl}" y1="${mT}" x2="${xl}" y2="${mT + plotH}" stroke="#0891b2" stroke-width="0.9" stroke-dasharray="2 2"/>`;
+            const lt = 'Inicio de vuelo';
+            const lw = lt.length * 3.5 + 6;
+            let lxx = xl + 3; if (lxx + lw > mL + plotW) lxx = xl - 3 - lw; if (lxx < mL) lxx = mL + 1;
+            svg += `<rect x="${lxx}" y="${mT + 13}" width="${lw}" height="9" rx="2" fill="#fff" opacity="0.9"/>`;
+            svg += `<text x="${lxx + 3}" y="${mT + 19.5}" font-size="6.5" font-weight="bold" fill="#0891b2">${lt}</text>`;
+          }
+        }
+        // Veredicto (leyenda arriba a la derecha): VUELO NULO / VÁLIDO
+        const vTxt = huboRearranque ? 'VUELO NULO (rearranque)' : 'VUELO VÁLIDO';
+        const vCol = huboRearranque ? '#d11' : '#2ca24a';
+        const vw = vTxt.length * 4.0 + 8;
+        const vx = mL + plotW - vw;
+        svg += `<rect x="${vx}" y="${mT + 2}" width="${vw}" height="10" rx="2" fill="#fff" opacity="0.9" stroke="${vCol}" stroke-width="0.5"/>`;
+        svg += `<text x="${vx + vw / 2}" y="${mT + 9.5}" text-anchor="middle" font-size="7" font-weight="bold" fill="${vCol}">${vTxt}</text>`;
+      }
+
+      // Habilita/deshabilita las casillas de PWM según el vuelo tenga o no PWM
+      $('chkPin').disabled = !tienePwm;
+      $('chkPout').disabled = !tienePwm;
+      $('chkMotor').disabled = !tienePwm;
+      $('lblMotor').classList.toggle('off', !tienePwm);
+      $('motorLeyenda').classList.toggle('hidden', !useMotor);   // leyenda de colores solo con "Colorear por motor" activo
+
+      svg += `<g id="hover"></g>`;
+      g.innerHTML = svg;
+    }
+
+    // Tooltip: muestra tiempo·altura del punto más cercano al puntero.
+    function moverHover(e) {
+      const svg = $('grafico');
+      if (!chartMap || !registros.length) return;
+      const ctm = svg.getScreenCTM();
+      if (!ctm) return;
+      const pt = svg.createSVGPoint();
+      pt.x = e.clientX; pt.y = e.clientY;
+      const loc = pt.matrixTransform(ctm.inverse());
+
+      let best = 0, bd = 1e9;
+      registros.forEach((r, i) => { const d = Math.abs(chartMap.X(r.t) - loc.x); if (d < bd) { bd = d; best = i; } });
+      const r = registros[best], x = chartMap.X(r.t);
+      const aVis = Math.max(0, r.a);                 // alturaVisual (coincide con el punto dibujado)
+      const y = chartMap.Y(aVis);
+
+      let label = `${(r.t - (chartMap.tOffset || 0)).toFixed(1)} s`;   // t=0 en el lanzamiento (inicio de vuelo)
+      if (chartMap.showAlt) label += ` · ${aVis} m`;
+      if (chartMap.tienePwm && (chartMap.showPin || chartMap.showPout)) {
+        if (chartMap.showPin)  label += ` · in ${r.pwmIn}`;
+        if (chartMap.showPout) label += ` · out ${r.pwmOut}`;
+      }
+      // Dato técnico: si la altura real era negativa, se muestra abajo en segundo plano.
+      const orig = (chartMap.showAlt && r.a < 0) ? `Original: ${r.a} m` : null;
+      const tw = Math.max(label.length * 4.2, orig ? orig.length * 3.6 : 0) + 8;
+      const th = orig ? 22 : 13;
+      let tx = x + 6; if (tx + tw > chartMap.W - 2) tx = x - 6 - tw; if (tx < 2) tx = 2;
+      const ty = Math.max(chartMap.mT + 1, y - 15 - (orig ? 9 : 0));
+
+      let hv = `<line x1="${x}" y1="${chartMap.mT}" x2="${x}" y2="${chartMap.mT + chartMap.plotH}" stroke="#999" stroke-width="0.6" stroke-dasharray="3 2"/>`;
+      if (chartMap.showAlt) hv += `<circle cx="${x}" cy="${y}" r="3" fill="${GC.alt}" stroke="#fff" stroke-width="1"/>`;
+      hv += `<rect x="${tx}" y="${ty}" width="${tw}" height="${th}" rx="3" fill="#ffffff" stroke="#bbb" stroke-width="0.6"/>`;
+      hv += `<text x="${tx + tw / 2}" y="${ty + 9}" text-anchor="middle" font-size="8" fill="#222">${label}</text>`;
+      if (orig) hv += `<text x="${tx + tw / 2}" y="${ty + 18}" text-anchor="middle" font-size="6.5" fill="#999">${orig}</text>`;
+
+      const h = document.getElementById('hover');
+      if (h) h.innerHTML = hv;
+    }
+    function salirHover() { const h = document.getElementById('hover'); if (h) h.innerHTML = ''; }
+
+    function guardarCSV() {
+      if (!registros.length) return;
+      const conPwm = registros.some(r => r.pwmIn !== undefined);
+      const head = conPwm ? 'tiempo_s,altura_m,pwm_in_us,pwm_out_us\n' : 'tiempo_s,altura_m\n';
+      const body = registros.map(r => conPwm ? `${r.t},${r.a},${r.pwmIn},${r.pwmOut}` : `${r.t},${r.a}`).join('\n');
+      const csv = head + body + '\n';
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = `vuelo_${selectedId}.csv`; a.click();
+      URL.revokeObjectURL(url);
+      log('CSV guardado.');
+    }
+
+    // ---- Import / Export .vlo (formato propio, JSON) ----
+    function descargarVuelo(id) {           // promesa: descarga un vuelo y lo cachea (BT)
+      if (vuelosCache[id]) return Promise.resolve();
+      selectedId = id; registros = [];
+      const f = flights.find(x => x.id === id); esperados = f ? f.n : 0;
+      $('cargBar').style.width = '0%';
+      $('cargTxt').textContent = `Obteniendo Vuelo ${id}…`;
+      $('cargando').classList.remove('hidden');
+      const p = new Promise(res => { resolverDescarga = res; });
+      enviar('DOWNLOAD:' + id).catch(() => {});
+      return p;
+    }
+
+    async function exportarVlo() {
+      if (flights.length === 0) return;
+      try {
+        if (conectadoBT) {                  // asegurar todos los vuelos en caché
+          for (const f of flights) { if (!vuelosCache[f.id]) await descargarVuelo(f.id); }
+        }
+        const data = {
+          formato: 'vlo', version: 1, appVersion: WEB_VERSION,
+          piloto: cfg.PILOTO || '', modelo: cfg.MODELO || '',
+          exportado: new Date().toISOString(),
+          vuelos: flights.slice().sort((a, b) => a.id - b.id).map(f => ({
+            id: f.id, motivo: motivoCache[f.id] || 0, registros: (vuelosCache[f.id] || []).map(r =>
+              r.pwmIn !== undefined ? [r.t, r.a, r.pwmIn, r.pwmOut] : [r.t, r.a])
+          }))
+        };
+        const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = 'vuelos.vlo'; a.click();
+        URL.revokeObjectURL(url);
+        log(`Exportados ${data.vuelos.length} vuelos a .vlo`);
+      } catch (e) { log('Error export .vlo: ' + e.message); }
+    }
+
+    function exportarCsvTodos() {
+      if (flights.length === 0) return;
+      let csv = 'vuelo,tiempo_s,altura_m,pwm_in_us,pwm_out_us\n';
+      flights.slice().sort((a, b) => a.id - b.id).forEach(f => {
+        (vuelosCache[f.id] || []).forEach(r => {
+          const pi = r.pwmIn !== undefined ? r.pwmIn : '';
+          const po = r.pwmOut !== undefined ? r.pwmOut : '';
+          csv += `${f.id},${r.t},${r.a},${pi},${po}\n`;
+        });
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'vuelos.csv'; a.click();
+      URL.revokeObjectURL(url);
+      log('CSV (todos los vuelos) guardado.');
+    }
+
+    async function importarVlo(file) {
+      let data;
+      try { data = JSON.parse(await file.text()); }
+      catch { mostrarAviso('❌ Archivo .vlo inválido.', 'var(--err)'); return; }
+      if (!data || !Array.isArray(data.vuelos)) { mostrarAviso('❌ Archivo .vlo inválido.', 'var(--err)'); return; }
+      modoArchivo = true; conectadoBT = false;
+      vuelosCache = {}; motivoCache = {}; selectedId = null;
+      flights = data.vuelos.map(v => {
+        const regs = (v.registros || []).map(p => p.length >= 4
+          ? { t: +p[0], a: +p[1], pwmIn: +p[2], pwmOut: +p[3] }
+          : { t: +p[0], a: +p[1] });
+        vuelosCache[v.id] = regs;
+        motivoCache[v.id] = +v.motivo || 0;   // motivo de corte (si el .vlo lo trae)
+        const dur = regs.length ? Math.max(...regs.map(r => r.t)) : 0;
+        return { id: +v.id, n: regs.length, dur };
+      });
+      cfg = { PILOTO: data.piloto || '', MODELO: data.modelo || '' };
+      $('detalle').classList.add('hidden');
+      renderLista();
+      configurarUISesion();
+      $('sub').textContent = data.piloto ? ('Piloto: ' + data.piloto) : '';
+      mostrarAviso('', '');
+      log(`Importados ${flights.length} vuelos de ${file.name}`);
+    }
+
+    // ---- Eventos ----
+    $('btnConectar').onclick = conectar;
+    $('btnCerrar').onclick = cerrarSesion;
+    // Modal "Cómo conectar": abre con el botón, cierra con Cerrar / tocando afuera / Esc
+    $('btnAyuda').onclick = () => $('ayudaModal').classList.remove('hidden');
+    $('btnAyudaCerrar').onclick = () => $('ayudaModal').classList.add('hidden');
+    $('ayudaModal').addEventListener('click', e => { if (e.target === $('ayudaModal')) $('ayudaModal').classList.add('hidden'); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') $('ayudaModal').classList.add('hidden'); });
+    $('btnImportar').onclick = () => $('fileVlo').click();
+    $('fileVlo').addEventListener('change', (e) => { if (e.target.files[0]) importarVlo(e.target.files[0]); e.target.value = ''; });
+    $('btnExportar').onclick = exportarVlo;
+    $('btnExportarCsv').onclick = exportarCsvTodos;
+    $('btnActualizar').onclick = pedirLista;
+    $('btnGuardarCfg').onclick = guardarConfig;
+    $('btnBaro').onclick = pedirBaro;
+    $('btnPwm').onclick = pedirPwm;
+    $('btnPwmMon').onclick = togglePwmMon;
+    $('btnDebug').onclick = toggleDebug;
+    // Pantalla (OLED): togglear/usar y altura de aviso (aplican al instante, persisten en NVS)
+    $('cfgLcdOn').onchange = async (e) => {
+      try { await enviar('SET:LCDON:' + (e.target.checked ? '1' : '0')); }
+      catch (err) { log('Error LCDON: ' + err.message); }
+    };
+    $('cfgLcdAlt').oninput  = (e) => { $('cfgLcdAltVal').textContent = (+e.target.value).toFixed(1); };
+    $('cfgLcdAlt').onchange = async (e) => {
+      try { await enviar('SET:LCDALT:' + (+e.target.value).toFixed(1)); }
+      catch (err) { log('Error LCDALT: ' + err.message); }
+    };
+    $('btnLog').onclick = () => {
+      const oculta = $('log').classList.toggle('hidden');
+      $('btnLog').textContent = oculta ? 'Mostrar consola' : 'Ocultar consola';
+    };
+    $('btnReboot').onclick = async () => {
+      if (!confirm('¿Reiniciar la placa? Se corta la conexión. Para reconectar, apretá BOOT en los primeros segundos.')) return;
+      try { await enviar('REBOOT'); log('Reinicio enviado.'); } catch (e) { log('Error REBOOT: ' + e.message); }
+    };
+    $('btnCsv').onclick = guardarCSV;
+    $('btnBorrar').onclick = () => { if (selectedId != null) borrarVuelo(selectedId); };
+    $('btnBorrarTodos').onclick = borrarTodos;
+    // Casillas de series del gráfico
+    $('chkAlt').onchange   = e => { serieVis.alt   = e.target.checked; dibujarGrafico(); };
+    $('chkPin').onchange   = e => { serieVis.pin   = e.target.checked; dibujarGrafico(); };
+    $('chkPout').onchange  = e => { serieVis.pout  = e.target.checked; dibujarGrafico(); };
+    $('chkMotor').onchange = e => { serieVis.motor = e.target.checked; dibujarGrafico(); };
+    $('chkZona').onchange = aplicarZonaMuerta;
+    $('selVuelo').addEventListener('change', (e) => {
+      const id = +e.target.value;
+      if (id) seleccionarVuelo(id);
+      else { selectedId = null; $('detalle').classList.add('hidden'); }
+    });
+    // --- Zoom (rueda / pinch) + pan (arrastrar) + doble-click reset ---
+    function svgLoc(clientX, clientY) {
+      const svg = $('grafico'); const ctm = svg.getScreenCTM();
+      const pt = svg.createSVGPoint(); pt.x = clientX; pt.y = clientY;
+      return pt.matrixTransform(ctm.inverse());
+    }
+    function tiempoBajoX(svgx) {
+      if (!chartMap) return 0;
+      return chartMap.t0 + (svgx - chartMap.mL) / chartMap.plotW * (chartMap.t1 - chartMap.t0);
+    }
+    function clampView(t0, t1) {
+      // Limita dentro del rango BASE (recortado si "Limpiar zona muerta" está activo).
+      const lo = chartMap ? chartMap.baseLo : 0;
+      const hi = chartMap ? chartMap.baseHi : 1;
+      const span = hi - lo;
+      let w = t1 - t0; if (w < 0.5) w = 0.5; if (w > span) w = span;
+      if (t0 < lo) { t0 = lo; t1 = lo + w; }
+      if (t1 > hi) { t1 = hi; t0 = hi - w; }
+      if (t0 < lo) t0 = lo;
+      return [t0, t1];
+    }
+    function zoomEnTiempo(tc, factor) {
+      let [t0, t1] = tView; const frac = (tc - t0) / (t1 - t0);
+      const span = chartMap.baseHi - chartMap.baseLo;
+      let w = (t1 - t0) * factor; w = Math.max(0.5, Math.min(span, w));
+      tView = clampView(tc - frac * w, tc - frac * w + w);
+      dibujarGrafico();
+    }
+    $('grafico').addEventListener('wheel', (e) => {
+      if (!chartMap) return; e.preventDefault();
+      zoomEnTiempo(tiempoBajoX(svgLoc(e.clientX, e.clientY).x), e.deltaY < 0 ? 0.85 : 1.18);
+    }, { passive: false });
+    $('grafico').addEventListener('pointerdown', (e) => {
+      if (!chartMap) return;
+      $('grafico').setPointerCapture(e.pointerId);
+      pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (pointers.size === 1) { dragging = true; dragStartSvg = svgLoc(e.clientX, e.clientY).x; dragStartView = tView.slice(); }
+      else if (pointers.size === 2) {
+        dragging = false; const p = [...pointers.values()];
+        pinchStartDist = Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y); pinchStartView = tView.slice();
+      }
+    });
+    $('grafico').addEventListener('pointermove', (e) => {
+      if (!chartMap) return;
+      if (pointers.has(e.pointerId)) pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (pointers.size >= 2) {                        // pinch (celu)
+        e.preventDefault(); const p = [...pointers.values()];
+        const dist = Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y);
+        if (pinchStartDist > 0 && dist > 0) {
+          const mid = svgLoc((p[0].x + p[1].x) / 2, (p[0].y + p[1].y) / 2);
+          tView = pinchStartView.slice();
+          zoomEnTiempo(tiempoBajoX(mid.x), pinchStartDist / dist);
+          pinchStartDist = dist; pinchStartView = tView.slice();
+        }
+        return;
+      }
+      if (dragging) {                                  // pan (arrastrar)
+        const w = dragStartView[1] - dragStartView[0];
+        const dt = (svgLoc(e.clientX, e.clientY).x - dragStartSvg) / chartMap.plotW * w;
+        tView = clampView(dragStartView[0] - dt, dragStartView[1] - dt);
+        dibujarGrafico(); return;
+      }
+      moverHover(e);                                   // hover (sin arrastrar)
+    });
+    function finPointer(e) {
+      pointers.delete(e.pointerId);
+      if (pointers.size < 2) pinchStartDist = 0;
+      if (pointers.size === 0) { dragging = false; salirHover(); }
+    }
+    $('grafico').addEventListener('pointerup', finPointer);
+    $('grafico').addEventListener('pointercancel', finPointer);
+    $('grafico').addEventListener('pointerleave', (e) => { if (!dragging && pointers.size === 0) salirHover(); });
+    $('grafico').addEventListener('dblclick', () => { tView = null; dibujarGrafico(); });
+
+    $('ver').textContent = 'Web v' + WEB_VERSION;
+    $('cfgWebVer').textContent = WEB_VERSION;
+    $('btnUpd').onclick = buscarActualizaciones;
+    // Cartel automático de actualización: compara contra version.json del repo público.
+    const REPO_URL = 'https://github.com/drsistemas01/F5LControl';
+    $('updBannerBtn').onclick = () => window.open(REPO_URL, '_blank', 'noopener');
+    // Chequeo de actualización: SOLO al conectar por BT (con cfg.VERSION ya cargado)
+    // y SOLO si hay internet. Compara Web y FW. Sin internet (campo) se ignora en
+    // silencio. Botón "Ignorar" del cartel para ocultarlo (y que no vuelva a salir).
+    let updIgnorado = false;
+    $('updBannerIgnorar').onclick = () => { updIgnorado = true; $('updBanner').classList.add('hidden'); };
+    async function chequeoUpdConexion() {
+      if (updIgnorado) return;                      // el usuario ya lo ignoró en esta sesión
+      try {
+        const r = await fetch(REPO_VERSION_URL + '?t=' + Date.now(), { cache: 'no-store' });
+        if (!r.ok) return;
+        const remoto = await r.json();
+        const hayWeb = remoto.web && cmpVer(remoto.web.version, WEB_VERSION) > 0;
+        const hayFw  = remoto.fw && cfg.VERSION && cmpVer(remoto.fw.version, cfg.VERSION) > 0;
+        if (hayWeb || hayFw) {
+          const partes = [];
+          if (hayWeb) partes.push(`Web ${WEB_VERSION} → ${remoto.web.version}`);
+          if (hayFw)  partes.push(`FW ${cfg.VERSION} → ${remoto.fw.version}`);
+          // toma la etiqueta más importante entre lo que haya nuevo (seguridad/urgente manda)
+          const cands = [];
+          if (hayWeb) cands.push(remoto.web);
+          if (hayFw)  cands.push(remoto.fw);
+          const rankUrg = p => ({ urgente: 3, recomendada: 2, opcional: 1 }[p && p.urgencia] || 0)
+                             + (p && p.tipo === 'seguridad' ? 2 : 0);
+          const top = cands.slice().sort((a, b) => rankUrg(b) - rankUrg(a))[0];
+          const et = etiquetaCambio(top);
+          $('updBannerTxt').textContent =
+            '🔔 Hay una versión más nueva.' +
+            (et ? ' ' + et.txt + '.' : ' Se recomienda actualizar desde GitHub.') +
+            (partes.length ? ' (' + partes.join(' · ') + ')' : '');
+          $('updBanner').classList.remove('hidden');
+        } else {
+          $('updBanner').classList.add('hidden');
+        }
+      } catch (e) { /* sin internet (campo): se ignora */ }
+    }
+    if (!navigator.bluetooth) mostrarAviso('⚠️ Este navegador no soporta Web Bluetooth. Abrí con Chrome (Android o PC).', 'var(--warn)');
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+  </script>
+</body>
+</html>
