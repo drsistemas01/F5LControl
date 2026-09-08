@@ -1,0 +1,11 @@
+Usá bootloader.bin en 0x0.
+Usá partitions.bin en 0x8000.
+Usá firmware.bin en 0x10000.
+No actives opciones de secure boot, flash encryption, encrypt, ni cosas de eFuse.
+No toques configuraciones raras de seguridad.
+
+Lo único realmente delicado es quemar eFuses o activar seguridad permanente. P
+ara tu caso, no uses nada de eso. Solo flasheo normal.
+
+DATOS EN 
+C:\Users\administrador\Documents\PlatformIO\Projects\DataloguerEsp32\.pio\build\adafruit_qtpy_esp32c3

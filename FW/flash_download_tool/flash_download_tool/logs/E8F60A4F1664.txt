@@ -1,0 +1,491 @@
+Download button pressed
+*************************** START ****************************
+Chip: ESP32C3
+Download mode: uart
+Start time: 20260813-12:43
+Connect baud: 115200
+Com:COM8
+connecting...
+manufacturer_id: 0x46
+device_id: 0x4016
+fs:0x200200
+
+Leaving...
+com closed
+Total use time: 4 s
+Download result: PASS
+*************************** END ****************************
+
+Erase button pressed
+*************************** START ****************************
+Chip: ESP32C3
+Download mode: uart
+Start time: 20260813-12:43
+Connect baud: 115200
+Com:COM8
+connecting...
+manufacturer_id: 0x46
+device_id: 0x4016
+com closed
+Total use time: 4 s
+Download result: PASS
+*************************** END ****************************
+
+Download button pressed
+*************************** START ****************************
+Chip: ESP32C3
+Download mode: uart
+Start time: 20260813-12:44
+Connect baud: 115200
+Com:COM8
+connecting...
+manufacturer_id: 0x46
+device_id: 0x4016
+fs:0x200200
+
+Leaving...
+com closed
+Total use time: 4 s
+Download result: PASS
+*************************** END ****************************
+
+Download button pressed
+*************************** START ****************************
+Chip: ESP32C3
+Download mode: uart
+Start time: 20260813-12:44
+Connect baud: 115200
+Com:COM8
+connecting...
+manufacturer_id: 0x46
+device_id: 0x4016
+fs:0x200200
+
+Leaving...
+com closed
+Total use time: 4 s
+Download result: PASS
+*************************** END ****************************
+
+Download button pressed
+*************************** START ****************************
+Chip: ESP32C3
+Download mode: uart
+Start time: 20260813-12:44
+Connect baud: 115200
+Com:COM8
+connecting...
+manufacturer_id: 0x46
+device_id: 0x4016
+fs:0x200200
+
+Leaving...
+com closed
+Total use time: 4 s
+Download result: PASS
+*************************** END ****************************
+
+Download button pressed
+*************************** START ****************************
+Chip: ESP32C3
+Download mode: uart
+Start time: 20260813-12:48
+Connect baud: 115200
+Com:COM8
+connecting...
+manufacturer_id: 0x46
+device_id: 0x4016
+fs:0x200200
+
+Leaving...
+com closed
+Total use time: 4 s
+Download result: PASS
+*************************** END ****************************
+
+Download button pressed
+*************************** START ****************************
+Chip: ESP32C3
+Download mode: uart
+Start time: 20260813-12:56
+Connect baud: 115200
+Com:COM8
+connecting...
+manufacturer_id: 0x46
+device_id: 0x4016
+fs:0x200200
+address/file: 4096 C:\Users\administrador\Desktop\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\firmware.bin
+Wrote 1559168 bytes (885595 compressed) at 0x00001000 in 5.6 seconds (effective 2242.0 kbit/s)...
+File: C:\Users\administrador\Desktop\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\firmware.bin
+File  md5: 2ae1b40e081a789b619c4c0153ad66d9
+Flash md5: 2ae1b40e081a789b619c4c0153ad66d9
+Hash of data verified.
+
+Leaving...
+com closed
+Total use time: 9 s
+Download result: PASS
+*************************** END ****************************
+
+Download button pressed
+*************************** START ****************************
+Chip: ESP32C3
+Download mode: uart
+Start time: 20260813-13:02
+Connect baud: 115200
+Com:COM8
+connecting...
+manufacturer_id: 0x46
+device_id: 0x4016
+fs:0x200200
+address/file: 0 C:\Users\administrador\Desktop\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\bootloader.bin
+address/file: 32768 C:\Users\administrador\Desktop\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\partitions.bin
+address/file: 65536 C:\Users\administrador\Desktop\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\firmware.bin
+Wrote 13248 bytes (9562 compressed) at 0x00000000 in 0.1 seconds (effective 905.9 kbit/s)...
+Wrote 3072 bytes (137 compressed) at 0x00008000 in 0.0 seconds (effective 4915.8 kbit/s)...
+Wrote 1559168 bytes (885595 compressed) at 0x00010000 in 5.2 seconds (effective 2377.0 kbit/s)...
+File: C:\Users\administrador\Desktop\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\bootloader.bin
+File  md5: 61d9b0780b16a25647aad77cdab6df21
+Flash md5: 61d9b0780b16a25647aad77cdab6df21
+Hash of data verified.
+File: C:\Users\administrador\Desktop\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\partitions.bin
+File  md5: 70007348574201233bc0cb17155e9d12
+Flash md5: 70007348574201233bc0cb17155e9d12
+Hash of data verified.
+File: C:\Users\administrador\Desktop\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\firmware.bin
+File  md5: 2ae1b40e081a789b619c4c0153ad66d9
+Flash md5: 2ae1b40e081a789b619c4c0153ad66d9
+Hash of data verified.
+
+Leaving...
+com closed
+Total use time: 10 s
+Download result: PASS
+*************************** END ****************************
+
+Erase button pressed
+*************************** START ****************************
+Chip: ESP32C3
+Download mode: uart
+Start time: 20260813-13:04
+Connect baud: 115200
+Com:COM8
+connecting...
+manufacturer_id: 0x46
+device_id: 0x4016
+com closed
+Total use time: 4 s
+Download result: PASS
+*************************** END ****************************
+
+Download button pressed
+*************************** START ****************************
+Chip: ESP32C3
+Download mode: uart
+Start time: 20260813-13:04
+Connect baud: 115200
+Com:COM8
+serial port open error
+Download button pressed
+*************************** START ****************************
+Chip: ESP32C3
+Download mode: uart
+Start time: 20260813-13:04
+Connect baud: 115200
+Com:COM8
+connecting...
+manufacturer_id: 0x46
+device_id: 0x4016
+fs:0x200200
+address/file: 0 C:\Users\administrador\Desktop\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\bootloader.bin
+address/file: 32768 C:\Users\administrador\Desktop\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\partitions.bin
+address/file: 65536 C:\Users\administrador\Desktop\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\firmware.bin
+Wrote 13248 bytes (9562 compressed) at 0x00000000 in 0.1 seconds (effective 1709.4 kbit/s)...
+Wrote 3072 bytes (137 compressed) at 0x00008000 in 0.0 seconds (effective 4915.8 kbit/s)...
+Wrote 1559168 bytes (885595 compressed) at 0x00010000 in 3.5 seconds (effective 3565.4 kbit/s)...
+File: C:\Users\administrador\Desktop\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\bootloader.bin
+File  md5: 61d9b0780b16a25647aad77cdab6df21
+Flash md5: 61d9b0780b16a25647aad77cdab6df21
+Hash of data verified.
+File: C:\Users\administrador\Desktop\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\partitions.bin
+File  md5: 70007348574201233bc0cb17155e9d12
+Flash md5: 70007348574201233bc0cb17155e9d12
+Hash of data verified.
+File: C:\Users\administrador\Desktop\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\firmware.bin
+File  md5: 2ae1b40e081a789b619c4c0153ad66d9
+Flash md5: 2ae1b40e081a789b619c4c0153ad66d9
+Hash of data verified.
+
+Leaving...
+com closed
+Total use time: 7 s
+Download result: PASS
+*************************** END ****************************
+
+Download button pressed
+*************************** START ****************************
+Chip: ESP32C3
+Download mode: uart
+Start time: 20260819-07:41
+Connect baud: 115200
+Com:COM8
+connecting...
+manufacturer_id: 0x46
+device_id: 0x4016
+fs:0x200200
+
+Leaving...
+com closed
+Total use time: 4 s
+Download result: PASS
+*************************** END ****************************
+
+Download button pressed
+*************************** START ****************************
+Chip: ESP32C3
+Download mode: uart
+Start time: 20260819-07:42
+Connect baud: 115200
+Com:COM8
+connecting...
+manufacturer_id: 0x46
+device_id: 0x4016
+fs:0x200200
+
+Leaving...
+com closed
+Total use time: 4 s
+Download result: PASS
+*************************** END ****************************
+
+Erase button pressed
+*************************** START ****************************
+Chip: ESP32C3
+Download mode: uart
+Start time: 20260819-07:43
+Connect baud: 115200
+Com:COM8
+connecting...
+manufacturer_id: 0x46
+device_id: 0x4016
+com closed
+Total use time: 4 s
+Download result: PASS
+*************************** END ****************************
+
+Download button pressed
+*************************** START ****************************
+Chip: ESP32C3
+Download mode: uart
+Start time: 20260819-07:43
+Connect baud: 115200
+Com:COM8
+connecting...
+manufacturer_id: 0x46
+device_id: 0x4016
+fs:0x200200
+
+Leaving...
+com closed
+Total use time: 3 s
+Download result: PASS
+*************************** END ****************************
+
+Download button pressed
+*************************** START ****************************
+Chip: ESP32C3
+Download mode: uart
+Start time: 20260819-07:44
+Connect baud: 115200
+Com:COM8
+connecting...
+manufacturer_id: 0x46
+device_id: 0x4016
+fs:0x200200
+
+Leaving...
+com closed
+Total use time: 3 s
+Download result: PASS
+*************************** END ****************************
+
+Download button pressed
+*************************** START ****************************
+Chip: ESP32C3
+Download mode: uart
+Start time: 20260819-07:53
+Connect baud: 115200
+Com:COM8
+connecting...
+manufacturer_id: 0x46
+device_id: 0x4016
+fs:0x200200
+address/file: 0 D:\Nextcloud\PERSONAL\@HOBBIE\Aeromodelismo\F5l\LIMITADOR JMG\ESP32 C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\bootloader.bin
+address/file: 32768 D:\Nextcloud\PERSONAL\@HOBBIE\Aeromodelismo\F5l\LIMITADOR JMG\ESP32 C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\partitions.bin
+address/file: 65536 D:\Nextcloud\PERSONAL\@HOBBIE\Aeromodelismo\F5l\LIMITADOR JMG\ESP32 C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\firmware.bin
+Wrote 13248 bytes (9562 compressed) at 0x00000000 in 0.1 seconds (effective 1700.8 kbit/s)...
+Wrote 3072 bytes (137 compressed) at 0x00008000 in 0.0 seconds (effective 5145.0 kbit/s)...
+Wrote 1559296 bytes (885666 compressed) at 0x00010000 in 3.5 seconds (effective 3576.6 kbit/s)...
+File: D:\Nextcloud\PERSONAL\@HOBBIE\Aeromodelismo\F5l\LIMITADOR JMG\ESP32 C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\bootloader.bin
+File  md5: 61d9b0780b16a25647aad77cdab6df21
+Flash md5: 61d9b0780b16a25647aad77cdab6df21
+Hash of data verified.
+File: D:\Nextcloud\PERSONAL\@HOBBIE\Aeromodelismo\F5l\LIMITADOR JMG\ESP32 C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\partitions.bin
+File  md5: 70007348574201233bc0cb17155e9d12
+Flash md5: 70007348574201233bc0cb17155e9d12
+Hash of data verified.
+File: D:\Nextcloud\PERSONAL\@HOBBIE\Aeromodelismo\F5l\LIMITADOR JMG\ESP32 C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\firmware.bin
+File  md5: c48c78fd26c5aa7273446292b8e87581
+Flash md5: c48c78fd26c5aa7273446292b8e87581
+Hash of data verified.
+
+Leaving...
+com closed
+Total use time: 6 s
+Download result: PASS
+*************************** END ****************************
+
+Download button pressed
+*************************** START ****************************
+Chip: ESP32C3
+Download mode: uart
+Start time: 20260820-07:26
+Connect baud: 115200
+Com:COM8
+connecting...
+manufacturer_id: 0x46
+device_id: 0x4016
+fs:0x200200
+address/file: 0 D:\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\bootloader.bin
+address/file: 32768 D:\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\partitions.bin
+address/file: 65536 D:\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\firmware.bin
+Wrote 13248 bytes (9562 compressed) at 0x00000000 in 0.1 seconds (effective 903.4 kbit/s)...
+Wrote 3072 bytes (137 compressed) at 0x00008000 in 0.0 seconds (effective 4911.1 kbit/s)...
+Wrote 1565872 bytes (889240 compressed) at 0x00010000 in 5.3 seconds (effective 2375.0 kbit/s)...
+File: D:\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\bootloader.bin
+File  md5: 61d9b0780b16a25647aad77cdab6df21
+Flash md5: 61d9b0780b16a25647aad77cdab6df21
+Hash of data verified.
+File: D:\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\partitions.bin
+File  md5: 70007348574201233bc0cb17155e9d12
+Flash md5: 70007348574201233bc0cb17155e9d12
+Hash of data verified.
+File: D:\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\firmware.bin
+File  md5: 5438bbd5a2bf8ca496f0bf660afa2821
+Flash md5: 5438bbd5a2bf8ca496f0bf660afa2821
+Hash of data verified.
+
+Leaving...
+com closed
+Total use time: 9 s
+Download result: PASS
+*************************** END ****************************
+
+Download button pressed
+*************************** START ****************************
+Chip: ESP32C3
+Download mode: uart
+Start time: 20260825-23:43
+Connect baud: 115200
+Com:COM8
+connecting...
+manufacturer_id: 0x46
+device_id: 0x4016
+fs:0x200200
+address/file: 0 C:\Users\Usuario\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\bootloader.bin
+address/file: 32768 C:\Users\Usuario\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\partitions.bin
+address/file: 65536 C:\Users\Usuario\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\firmware.bin
+Wrote 13248 bytes (9562 compressed) at 0x00000000 in 0.2 seconds (effective 695.9 kbit/s)...
+Wrote 3072 bytes (137 compressed) at 0x00008000 in 0.0 seconds (effective 7357.5 kbit/s)...
+Wrote 1584864 bytes (902725 compressed) at 0x00010000 in 6.8 seconds (effective 1869.7 kbit/s)...
+File: C:\Users\Usuario\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\bootloader.bin
+File  md5: 61d9b0780b16a25647aad77cdab6df21
+Flash md5: 61d9b0780b16a25647aad77cdab6df21
+Hash of data verified.
+File: C:\Users\Usuario\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\partitions.bin
+File  md5: 70007348574201233bc0cb17155e9d12
+Flash md5: 70007348574201233bc0cb17155e9d12
+Hash of data verified.
+File: C:\Users\Usuario\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\firmware.bin
+File  md5: 477acfe6fead064d4725de12b6a6de45
+Flash md5: 477acfe6fead064d4725de12b6a6de45
+Hash of data verified.
+
+Leaving...
+com closed
+Total use time: 11 s
+Download result: PASS
+*************************** END ****************************
+
+Download button pressed
+*************************** START ****************************
+Chip: ESP32C3
+Download mode: uart
+Start time: 20260826-12:11
+Connect baud: 115200
+Com:COM8
+connecting...
+manufacturer_id: 0x46
+device_id: 0x4016
+fs:0x200200
+address/file: 0 D:\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\bootloader.bin
+address/file: 32768 D:\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\partitions.bin
+address/file: 65536 D:\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\firmware_v3.0.6.bin
+Wrote 13248 bytes (9562 compressed) at 0x00000000 in 0.1 seconds (effective 879.5 kbit/s)...
+Wrote 3072 bytes (137 compressed) at 0x00008000 in 0.0 seconds (effective 5153.4 kbit/s)...
+Wrote 1585088 bytes (902778 compressed) at 0x00010000 in 5.3 seconds (effective 2415.1 kbit/s)...
+File: D:\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\bootloader.bin
+File  md5: 61d9b0780b16a25647aad77cdab6df21
+Flash md5: 61d9b0780b16a25647aad77cdab6df21
+Hash of data verified.
+File: D:\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\partitions.bin
+File  md5: 70007348574201233bc0cb17155e9d12
+Flash md5: 70007348574201233bc0cb17155e9d12
+Hash of data verified.
+File: D:\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\firmware_v3.0.6.bin
+File  md5: e12a3ad1d918d50edcac2cbce1c42e77
+Flash md5: e12a3ad1d918d50edcac2cbce1c42e77
+Hash of data verified.
+
+Leaving...
+com closed
+Total use time: 9 s
+Download result: PASS
+*************************** END ****************************
+
+Download button pressed
+*************************** START ****************************
+Chip: ESP32C3
+Download mode: uart
+Start time: 20260826-12:15
+Connect baud: 115200
+Com:COM8
+connecting...
+manufacturer_id: 0x46
+device_id: 0x4016
+fs:0x200200
+address/file: 0 D:\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\bootloader.bin
+address/file: 32768 D:\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\partitions.bin
+address/file: 65536 D:\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\firmware_v3.0.6.bin
+Wrote 13248 bytes (9562 compressed) at 0x00000000 in 0.1 seconds (effective 872.2 kbit/s)...
+Wrote 3072 bytes (137 compressed) at 0x00008000 in 0.0 seconds (effective 4968.6 kbit/s)...
+Wrote 1585088 bytes (902778 compressed) at 0x00010000 in 5.3 seconds (effective 2399.8 kbit/s)...
+File: D:\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\bootloader.bin
+File  md5: 61d9b0780b16a25647aad77cdab6df21
+Flash md5: 61d9b0780b16a25647aad77cdab6df21
+Hash of data verified.
+File: D:\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\partitions.bin
+File  md5: 70007348574201233bc0cb17155e9d12
+Flash md5: 70007348574201233bc0cb17155e9d12
+Hash of data verified.
+File: D:\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\firmware_v3.0.6.bin
+File  md5: e12a3ad1d918d50edcac2cbce1c42e77
+Flash md5: e12a3ad1d918d50edcac2cbce1c42e77
+Hash of data verified.
+
+Leaving...
+com closed
+Total use time: 9 s
+Download result: PASS
+*************************** END ****************************
+

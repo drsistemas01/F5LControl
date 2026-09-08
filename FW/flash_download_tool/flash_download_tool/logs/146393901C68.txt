@@ -1,0 +1,36 @@
+Download button pressed
+*************************** START ****************************
+Chip: ESP32C3
+Download mode: uart
+Start time: 20260902-17:35
+Connect baud: 115200
+Com:COM7
+connecting...
+manufacturer_id: 0x46
+device_id: 0x4016
+fs:0x200200
+address/file: 0 C:\Users\Usuario\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\bootloader.bin
+address/file: 32768 C:\Users\Usuario\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\partitions.bin
+address/file: 65536 C:\Users\Usuario\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\firmware_v3.0.15.bin
+Wrote 13248 bytes (9562 compressed) at 0x00000000 in 0.1 seconds (effective 837.4 kbit/s)...
+Wrote 3072 bytes (137 compressed) at 0x00008000 in 0.0 seconds (effective 1369.8 kbit/s)...
+Wrote 1588048 bytes (904847 compressed) at 0x00010000 in 5.4 seconds (effective 2346.6 kbit/s)...
+File: C:\Users\Usuario\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\bootloader.bin
+File  md5: 61d9b0780b16a25647aad77cdab6df21
+Flash md5: 61d9b0780b16a25647aad77cdab6df21
+Hash of data verified.
+File: C:\Users\Usuario\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\partitions.bin
+File  md5: 70007348574201233bc0cb17155e9d12
+Flash md5: 70007348574201233bc0cb17155e9d12
+Hash of data verified.
+File: C:\Users\Usuario\Nextcloud\PERSONAL\HOBBIE\Aeromodelismo\F5l\LIMITADOR_JMG\ESP32_C3\F5LControl\FW\flash_download_tool\flash_download_tool\dl_temp\bin_tmp\downloadPanel1\firmware_v3.0.15.bin
+File  md5: 8ba75bfc9af6120a037f9228ae77701b
+Flash md5: 8ba75bfc9af6120a037f9228ae77701b
+Hash of data verified.
+
+Leaving...
+com closed
+Total use time: 10 s
+Download result: PASS
+*************************** END ****************************
+

@@ -1,0 +1,16 @@
+{
+  "fw": {
+    "version": "3.0.17",
+    "tipo": "arreglo",
+    "urgencia": "recomendada",
+    "fecha": "2026-09-05",
+    "notas": "La pantalla de resultado ya no queda detenida al aterrizar (alterna siempre altura maxima y adicional). La altura de autoencendido predeterminada pasa a 3 m y la pantalla se apaga solo al encender el motor de nuevo."
+  },
+  "web": {
+    "version": "3.0.17",
+    "tipo": "mejora",
+    "urgencia": "opcional",
+    "fecha": "2026-09-08",
+    "notas": "La app ahora esta en espanol e ingles. Eliges el idioma con el boton de arriba; arranca en el idioma del dispositivo y recuerda tu eleccion."
+  }
+}
