@@ -1,0 +1,16 @@
+{
+  "fw": {
+    "version": "3.1.6",
+    "tipo": "beta",
+    "urgencia": "opcional",
+    "fecha": "2026-09-15",
+    "notas": "BETA (en prueba). Nuevo (solo version con pantalla): reset controlado con el boton. Manteniendolo 2 s con la pantalla encendida (en el piso), cierra y graba el vuelo, pone el motor en minimo y reinicia. Muestra RESET + barra y LISTO. Antes (3.1.5): el ESC se pone en failsafe apenas arranca el firmware para que un reset con la bateria puesta no de un tiron."
+  },
+  "web": {
+    "version": "3.1.12",
+    "tipo": "beta",
+    "urgencia": "opcional",
+    "fecha": "2026-09-15",
+    "notas": "BETA (en prueba). En la seccion Pantalla se puede habilitar/deshabilitar el reset con el boton y ajustar el tiempo de mantener (1 a 5 s). Requiere firmware 3.1.6 o superior. Ademas (3.1.11): deteccion de aterrizaje mas robusta cuando la grabacion se corta al tocar."
+  }
+}
