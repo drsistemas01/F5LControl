@@ -1,0 +1,16 @@
+{
+  "fw": {
+    "version": "3.1.7",
+    "tipo": "estable",
+    "urgencia": "opcional",
+    "fecha": "2026-09-16",
+    "notas": "Nuevo: el PWM minimo del ESC (reposo/failsafe/arranque) es configurable de 900 a 1000 us (default 900), porque algunos ESC no arman con el minimo en 1000. Se ajusta desde la web en la seccion Avanzadas. Aplica al reiniciar. Antes (3.1.6, solo version con pantalla): reset controlado con el boton BOOT."
+  },
+  "web": {
+    "version": "3.1.13",
+    "tipo": "estable",
+    "urgencia": "opcional",
+    "fecha": "2026-09-16",
+    "notas": "En Avanzadas (Solo para expertos) se puede ajustar el PWM minimo del ESC (900 a 1000 us). Requiere firmware 3.1.7 o superior. Probar SIEMPRE SIN helice."
+  }
+}
