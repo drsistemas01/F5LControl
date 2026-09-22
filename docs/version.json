@@ -1,0 +1,16 @@
+{
+  "fw": {
+    "version": "3.1.1",
+    "tipo": "estable",
+    "urgencia": "opcional",
+    "fecha": "2026-09-20",
+    "notas": "Version ESTABLE recomendada. De la 3.1.2 en adelante son BETA (en prueba) y no se ofrecen por aca; si las queres probar, se instalan a mano desde la carpeta FW/BETA. La 3.1.1 muestra la pantalla UPDATE con barra de progreso durante la actualizacion por Bluetooth."
+  },
+  "web": {
+    "version": "3.1.14",
+    "tipo": "estable",
+    "urgencia": "opcional",
+    "fecha": "2026-09-22",
+    "notas": "Deteccion de aterrizaje mas robusta: ahora calcula el aterrizaje aunque el barometro tenga ruido cerca del piso o el modelo se levante/mueva justo despues de tocar. Antes esos vuelos quedaban en 'baja confianza' sin tiempo de vuelo."
+  }
+}

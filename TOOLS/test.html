@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b1220" />
+  <title>F5LControl · Test</title>
+  <style>
+    :root{--bg:#0b1220;--card:#131c2e;--line:#24314b;--txt:#e6ecf7;--muted:#8ea0bf;--acc:#4f8cff;--ok:#35d07f;--warn:#ffb020;--err:#ff5c5c}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--txt);padding:16px;max-width:680px;margin:0 auto}
+    h1{font-size:1.2rem;margin:0;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .sub{color:var(--muted);font-size:.82rem;margin:2px 0 14px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px}
+    .titrow{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px;flex-wrap:wrap}
+    .titrow strong{font-size:.95rem}
+    button{border:0;border-radius:12px;padding:12px 12px;font-size:1rem;font-weight:600;color:#fff;background:var(--acc);cursor:pointer}
+    button.sec{background:#2a3752}button.danger{background:#7a2531}button.mini{padding:8px 12px;font-size:.9rem}
+    button:disabled{opacity:.4;cursor:not-allowed}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    .chip{font-size:.78rem;font-weight:700;padding:4px 10px;border-radius:999px;background:#2a3752;color:var(--muted)}
+    .chip.on{background:rgba(53,208,127,.15);color:var(--ok)}
+    .chip.off{background:rgba(255,92,92,.15);color:var(--err)}
+    .hint{font-size:.82rem;color:var(--muted)}
+    .hidden{display:none}
+    .kv{font-size:.9rem;display:flex;flex-direction:column;gap:4px;font-variant-numeric:tabular-nums}
+    .kv div{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:3px 0}
+    .kv b{color:var(--txt)}
+    .big{font-size:1.5rem;font-weight:700;font-variant-numeric:tabular-nums}
+    svg{width:100%;height:auto;display:block;margin-top:8px;background:#0f1626;border:1px solid var(--line);border-radius:10px}
+    #chart{cursor:grab;touch-action:none}#chart:active{cursor:grabbing}
+    input[type=range]{width:100%;accent-color:var(--acc)}
+    .inp{width:90px;padding:8px;border-radius:8px;border:1px solid var(--line);background:#0f1626;color:var(--txt);font-size:1rem}
+    .warn{border:1px solid var(--warn);background:rgba(230,160,0,.12);color:var(--warn);border-radius:10px;padding:10px 12px;font-weight:600;font-size:.86rem}
+    label.ck{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.9rem}
+    #log{font-family:ui-monospace,monospace;font-size:.72rem;color:var(--muted);white-space:pre-wrap;max-height:150px;overflow-y:auto;background:#0f1626;border:1px solid var(--line);border-radius:8px;padding:8px;margin-top:8px}
+    .leg{display:flex;gap:16px;font-size:.78rem;margin-top:6px;flex-wrap:wrap}
+    .leg i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px}
+  </style>
+</head>
+<body>
+  <h1>🛠️ F5LControl · Test <span id="estado" class="chip off">Sin conexión</span></h1>
+  <div class="sub">Herramienta de banco: barómetro, PWM del receptor, prueba de ESC y datos del equipo. Vía USB (cable) o Bluetooth.</div>
+
+  <!-- Conexión -->
+  <div class="card">
+    <div class="row">
+      <button id="btnUsb" class="block">🔌 Conectar USB</button>
+      <button id="btnBle" class="sec block">📶 Conectar Bluetooth</button>
+      <button id="btnDesc" class="sec block hidden">✖ Desconectar</button>
+    </div>
+    <p id="aviso" class="hint" style="margin:10px 0 0"></p>
+  </div>
+
+  <div id="panel" class="hidden">
+    <!-- Barómetro -->
+    <div class="card">
+      <div class="titrow">
+        <strong>🌡️ Barómetro</strong>
+        <div class="row" style="gap:6px;align-items:center">
+          <span class="hint">cada</span>
+          <input id="baroInt" class="inp" type="number" min="1" max="60" step="1" value="5" style="width:60px">
+          <span class="hint">s</span>
+          <button id="baroStart" class="mini">▶ Iniciar</button>
+          <button id="baroFit" class="sec mini">⤢ Ver todo</button>
+          <button id="baroCsv" class="sec mini">⬇ CSV</button>
+        </div>
+      </div>
+      <div class="kv">
+        <div><span>Estado</span><b id="bEstado">–</b></div>
+        <div><span>Sensor</span><b id="bTipo">–</b></div>
+        <div><span>Temperatura</span><b id="bTemp">– °C</b></div>
+        <div><span>Presión</span><b id="bPres">– hPa</b></div>
+        <div><span>Altura (rel. al encendido)</span><b id="bAlt">– m</b></div>
+      </div>
+      <svg id="chart" viewBox="0 0 320 170" role="img" aria-label="Presión y temperatura en el tiempo"></svg>
+      <div class="leg">
+        <button id="leftSel" class="sec mini"><i id="leftSw" style="background:#4f8cff"></i>Presión (hPa)</button>
+        <label class="ck" style="font-size:.78rem"><input type="checkbox" id="showTemp" checked><i style="background:#ffb020"></i>Temperatura</label>
+        <span id="chartInfo" class="hint"></span>
+      </div>
+    </div>
+
+    <!-- PWM -->
+    <div class="card">
+      <div class="titrow">
+        <strong>📡 PWM del receptor</strong>
+        <button id="pwmStart" class="mini">▶ Iniciar</button>
+      </div>
+      <div class="kv">
+        <div><span>Señal</span><b id="pSenal">–</b></div>
+        <div><span>PWM filtrado</span><b id="pUs">– µs</b></div>
+        <div><span>Último de la radio</span><b id="pCrudo">– µs</b></div>
+        <div><span>Pulsos consecutivos</span><b id="pConsec">–</b></div>
+        <div><span>Mínimo calibrado</span><b id="pMin">–</b></div>
+      </div>
+    </div>
+
+    <!-- ESC -->
+    <div class="card">
+      <div class="titrow"><strong>⚙️ Prueba de ESC</strong><span id="escVia" class="chip">solo USB</span></div>
+      <div class="warn">⚠️ SIN HÉLICE. Esta prueba hace girar el motor. Sacá la hélice antes de usarla.</div>
+      <label class="ck" style="margin:10px 0"><input type="checkbox" id="escOk"> Confirmo que <b>no hay hélice</b> puesta</label>
+      <div class="row" style="align-items:center;gap:10px">
+        <input id="escVal" type="range" min="1000" max="2000" step="10" value="1000" style="flex:1" disabled>
+        <b id="escUs" style="min-width:70px;text-align:right">1000 µs</b>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <button id="escSend" class="block" disabled>Enviar al ESC</button>
+        <button id="escMin" class="sec block" disabled>■ Mínimo (1000)</button>
+      </div>
+    </div>
+
+    <!-- Info -->
+    <div class="card">
+      <div class="titrow"><strong>ℹ️ Datos del equipo</strong>
+        <div class="row" style="gap:6px">
+          <button id="btnCfg" class="sec mini">Config</button>
+          <button id="btnInit" class="sec mini">Log inicio</button>
+          <button id="btnFs" class="sec mini">Memoria</button>
+        </div>
+      </div>
+      <div id="infoBox" class="kv"></div>
+    </div>
+
+    <!-- Consola -->
+    <div class="card">
+      <div class="titrow"><strong>Consola</strong><button id="btnLog" class="sec mini">Mostrar</button></div>
+      <div id="log" class="hidden"></div>
+    </div>
+  </div>
+
+  <script>
+    const SVC='f1a70001-5b3c-4d9a-9e21-0a1b2c3d4e5f';
+    const CH_CMD='f1a70003-5b3c-4d9a-9e21-0a1b2c3d4e5f';
+    const CH_DATA='f1a70004-5b3c-4d9a-9e21-0a1b2c3d4e5f';
+    const $=id=>document.getElementById(id);
+    const enc=new TextEncoder(), dec=new TextDecoder();
+    let mode=null;                 // 'usb' | 'ble'
+    // ---- USB (Web Serial) ----
+    let port=null, reader=null, writer=null, usbBuf='', usbAbort=false;
+    // ---- BLE ----
+    let device=null, chCmd=null, chData=null;
+    // ---- dispatch de líneas ----
+    const lineSubs=new Set();
+    function onLineRaw(txt){
+      // acumula por si llegan pedazos (USB) o varias líneas juntas
+      const parts=txt.split('\n');
+      for(const p of parts){ const l=p.trim(); if(l){ logLine('« '+l); lineSubs.forEach(fn=>fn(l)); } }
+    }
+    function log(s){ const el=$('log'); el.textContent+=s+'\n'; el.scrollTop=el.scrollHeight; }
+    function logLine(s){ log(s); }
+    function aviso(m,c){ $('aviso').textContent=m||''; $('aviso').style.color=c||''; }
+
+    // ---- envío + recolección de bloque (serializado con un lock simple) ----
+    let lock=Promise.resolve();
+    async function enviarRaw(cmd){
+      if(mode==='usb'){ if(!writer) throw new Error('sin USB'); await writer.write(enc.encode(cmd+'\n')); }
+      else if(mode==='ble'){ if(!chCmd) throw new Error('sin BLE'); await chCmd.writeValue(enc.encode(cmd)); }
+      else throw new Error('sin conexión');
+      log('» '+cmd);
+    }
+    // manda cmd y junta 'clave:valor' hasta una línea que termine en _END (o timeout)
+    function pedir(cmd, timeout=1500){
+      const run=async()=>{
+        const obj={};
+        const done=new Promise(res=>{
+          let t=setTimeout(()=>{ lineSubs.delete(h); res(obj); }, timeout);
+          const h=(l)=>{
+            if(/_END$/.test(l)){ clearTimeout(t); lineSubs.delete(h); res(obj); return; }
+            if(/_START$/.test(l)) return;
+            const i=l.indexOf(':'); if(i>0) obj[l.slice(0,i)]=l.slice(i+1).trim();
+          };
+          lineSubs.add(h);
+        });
+        await enviarRaw(cmd);
+        return done;
+      };
+      lock=lock.then(run,run); return lock;
+    }
+    async function enviarSolo(cmd){ const run=()=>enviarRaw(cmd); lock=lock.then(run,run); return lock; }
+
+    // ============ CONEXIÓN ============
+    function uiConectado(on){
+      $('estado').textContent = on? (mode==='usb'?'USB conectado':'Bluetooth conectado') : 'Sin conexión';
+      $('estado').className='chip '+(on?'on':'off');
+      $('panel').classList.toggle('hidden',!on);
+      $('btnUsb').classList.toggle('hidden',on);
+      $('btnBle').classList.toggle('hidden',on);
+      $('btnDesc').classList.toggle('hidden',!on);
+      // ESC solo por USB
+      const escUsb = on && mode==='usb';
+      $('escVia').textContent = escUsb? 'USB ✓' : 'solo USB';
+      $('escVia').className='chip '+(escUsb?'on':'');
+      actualizarEsc();
+    }
+    async function conectarUsb(){
+      if(!('serial' in navigator)){ aviso('⚠️ Este navegador no tiene Web Serial. Usá Chrome/Edge en PC.','var(--warn)'); return; }
+      try{
+        port=await navigator.serial.requestPort();
+        await port.open({baudRate:115200});
+        writer=port.writable.getWriter();
+        mode='usb'; usbAbort=false; usbBuf='';
+        leerUsb();
+        uiConectado(true); aviso('','');
+      }catch(e){ aviso('❌ '+e.message,'var(--err)'); }
+    }
+    async function leerUsb(){
+      reader=port.readable.getReader();
+      try{
+        while(!usbAbort){
+          const {value,done}=await reader.read();
+          if(done) break;
+          usbBuf+=dec.decode(value,{stream:true});
+          let idx;
+          while((idx=usbBuf.indexOf('\n'))>=0){ const line=usbBuf.slice(0,idx); usbBuf=usbBuf.slice(idx+1); onLineRaw(line); }
+        }
+      }catch(e){ /* desconectado */ }
+      try{ reader.releaseLock(); }catch(e){}
+    }
+    async function conectarBle(){
+      if(!navigator.bluetooth){ aviso('⚠️ Este navegador no soporta Web Bluetooth.','var(--warn)'); return; }
+      try{
+        device=await navigator.bluetooth.requestDevice({filters:[{services:[SVC]}],optionalServices:[SVC]});
+        device.addEventListener('gattserverdisconnected',()=>{ if(mode==='ble') desconectar(); });
+        const srv=await (await device.gatt.connect()).getPrimaryService(SVC);
+        chCmd=await srv.getCharacteristic(CH_CMD);
+        chData=await srv.getCharacteristic(CH_DATA);
+        await chData.startNotifications();
+        chData.addEventListener('characteristicvaluechanged',e=>onLineRaw(dec.decode(e.target.value)));
+        mode='ble'; uiConectado(true); aviso('','');
+      }catch(e){ aviso('❌ '+e.message,'var(--err)'); }
+    }
+    async function desconectar(){
+      pararBaro(); pararPwm();
+      try{ if(mode==='usb'){ usbAbort=true; try{await reader.cancel();}catch(e){} try{writer.releaseLock();}catch(e){} try{await port.close();}catch(e){} }
+           else if(mode==='ble'&&device&&device.gatt.connected){ device.gatt.disconnect(); } }catch(e){}
+      port=reader=writer=device=chCmd=chData=null; mode=null; lineSubs.clear();
+      uiConectado(false);
+    }
+    $('btnUsb').onclick=conectarUsb; $('btnBle').onclick=conectarBle; $('btnDesc').onclick=desconectar;
+
+    // ============ BARÓMETRO + GRÁFICA ============
+    let baroTimer=null, T=[], P=[], TEMP=[], ALT=[], t0=0;
+    let leftMetric='pres';   // 'pres' (hPa) | 'alt' (m) para el eje izquierdo
+    async function leerBaro(){
+      const o=await pedir('GETBARO');
+      $('bEstado').textContent=o.ESTADO||'–'; $('bTipo').textContent=o.MODELO||'–';
+      if(o.TEMP!==undefined){
+        $('bTemp').textContent=o.TEMP+' °C'; $('bPres').textContent=o.PRESION+' hPa'; $('bAlt').textContent=o.ALTITUD+' m';
+        const el=T.length?((Date.now()-t0)/1000):0; if(!T.length) t0=Date.now();
+        T.push(+el.toFixed(1)); P.push(parseFloat(o.PRESION)); TEMP.push(parseFloat(o.TEMP)); ALT.push(parseFloat(o.ALTITUD));
+        dibujar();
+      }
+    }
+    function baroToggle(){
+      if(baroTimer){ pararBaro(); return; }
+      const seg=Math.max(1,Math.min(60,parseInt($('baroInt').value)||5));
+      T.length=0; P.length=0; TEMP.length=0; ALT.length=0; vView=null; dibujar();   // limpia la grafica al iniciar
+      $('baroStart').textContent='⏹ Detener'; $('baroStart').style.background='var(--err)';
+      leerBaro(); baroTimer=setInterval(leerBaro, seg*1000);
+    }
+    function pararBaro(){ if(baroTimer){clearInterval(baroTimer);baroTimer=null;} $('baroStart').textContent='▶ Iniciar'; $('baroStart').style.background=''; }
+    $('baroStart').onclick=baroToggle;
+    $('baroCsv').onclick=()=>{
+      if(!T.length){aviso('No hay datos para exportar','var(--warn)');return;}
+      let csv='t_s,pres_hpa,temp_c,alt_m\n'; for(let i=0;i<T.length;i++) csv+=`${T[i]},${P[i]},${TEMP[i]},${ALT[i]}\n`;
+      const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+      a.download='baro_test.csv'; a.click();
+    };
+    const CW=320,CHH=170,cmL=38,cmR=34,cmT=10,cmB=20,cpw=CW-cmL-cmR,cph=CHH-cmT-cmB;
+    let vView=null;   // [a,b] en segundos; null = ver todo / seguir en vivo
+    function xrange(){ const tm=Math.max(1,T[T.length-1]||1); if(!vView||!isFinite(vView[0])||!isFinite(vView[1])) return [0,tm]; let a=Math.max(0,vView[0]),b=Math.min(tm,vView[1]); if(b-a<1)b=a+1; return [a,b]; }
+    function dibujar(){
+      const n=T.length, r=xrange(), a=r[0], b=r[1];
+      const idx=[]; for(let i=0;i<n;i++) if(T[i]>=a-1e-6&&T[i]<=b+1e-6) idx.push(i);
+      const use=idx.length?idx:[...Array(n).keys()];
+      const esAlt=(leftMetric==='alt');
+      const LARR=esAlt?ALT:P, Lcol=esAlt?'#35d07f':'#4f8cff';
+      const showTemp=$('showTemp').checked;
+      const ls=use.map(i=>LARR[i]).filter(isFinite), ts=use.map(i=>TEMP[i]).filter(isFinite);
+      const rng=(A,d)=>A.length?[Math.min(...A),Math.max(...A)]:[d-1,d+1];
+      let [lmin,lmax]=rng(ls, esAlt?0:1000),[tmin,tmax]=rng(ts,25);
+      const minSpan=esAlt?0.3:0.4;
+      if(lmax-lmin<minSpan){const m=(lmax+lmin)/2;lmin=m-minSpan/2;lmax=m+minSpan/2;}
+      if(tmax-tmin<0.4){const m=(tmax+tmin)/2;tmin=m-0.2;tmax=m+0.2;}
+      const X=t=>cmL+(t-a)/(b-a)*cpw, Yl=v=>cmT+(1-(v-lmin)/(lmax-lmin))*cph, Yt=v=>cmT+(1-(v-tmin)/(tmax-tmin))*cph;
+      let s=`<defs><clipPath id="cl"><rect x="${cmL}" y="${cmT}" width="${cpw}" height="${cph}"/></clipPath></defs>`;
+      s+=`<rect x="0" y="0" width="${CW}" height="${CHH}" fill="#0f1626"/>`;
+      s+=`<rect x="${cmL}" y="${cmT}" width="${cpw}" height="${cph}" fill="none" stroke="#24314b"/>`;
+      const dec=esAlt?1:2;
+      s+=`<text x="2" y="${Yl(lmax)+3}" fill="${Lcol}" font-size="7">${lmax.toFixed(dec)}</text><text x="2" y="${Yl(lmin)+3}" fill="${Lcol}" font-size="7">${lmin.toFixed(dec)}</text>`;
+      if(showTemp) s+=`<text x="${cmL+cpw+2}" y="${Yt(tmax)+3}" fill="#ffb020" font-size="7">${tmax.toFixed(2)}</text><text x="${cmL+cpw+2}" y="${Yt(tmin)+3}" fill="#ffb020" font-size="7">${tmin.toFixed(2)}</text>`;
+      s+=`<text x="${cmL}" y="${CHH-6}" fill="#8ea0bf" font-size="7">${a.toFixed(0)}s</text><text x="${cmL+cpw-16}" y="${CHH-6}" fill="#8ea0bf" font-size="7">${b.toFixed(0)}s</text>`;
+      const poly=(arr,Y,col)=>{ let d=''; for(let i=0;i<n;i++){ if(!isFinite(arr[i]))continue; d+=(d?'L':'M')+X(T[i]).toFixed(1)+' '+Y(arr[i]).toFixed(1)+' '; } return d?`<path d="${d}" fill="none" stroke="${col}" stroke-width="1.4" clip-path="url(#cl)"/>`:''; };
+      s+=poly(LARR,Yl,Lcol); if(showTemp) s+=poly(TEMP,Yt,'#ffb020');
+      $('chart').innerHTML=s;
+      const dl=ls.length?Math.max(...ls)-Math.min(...ls):0, dt=ts.length?Math.max(...ts)-Math.min(...ts):0;
+      const lu=esAlt?'m':'hPa', ln=esAlt?'ΔAlt':'ΔP';
+      $('chartInfo').textContent = n? `${n} lect · ${ln} ${dl.toFixed(dec)} ${lu}${showTemp?` · ΔT ${dt.toFixed(2)} °C`:''} · ${vView?('zoom '+a.toFixed(0)+'–'+b.toFixed(0)+'s'):'todo'}` : '';
+    }
+    // ---- zoom (rueda / pinch) + arrastre (pan). Al hacer zoom/pan la vista queda fija (ves datos viejos). ----
+    (function(){
+      const c=$('chart');
+      const pxToT=cx=>{ const rr=c.getBoundingClientRect(); const px=(cx-rr.left)/rr.width*CW; const r=xrange(); return r[0]+(px-cmL)/cpw*(r[1]-r[0]); };
+      c.addEventListener('wheel',e=>{ if(!T.length)return; e.preventDefault(); const r=xrange(),a=r[0],b=r[1]; const tc=pxToT(e.clientX); const f=e.deltaY<0?0.8:1.25; const tm=Math.max(1,T[T.length-1]); let na=Math.max(0,tc-(tc-a)*f), nb=Math.min(tm,tc+(b-tc)*f); if(!isFinite(na)||!isFinite(nb)||nb-na<2)return; vView=[na,nb]; dibujar(); },{passive:false});
+      const pts=new Map(); let pan=null, pinch=null;
+      c.addEventListener('pointerdown',e=>{ c.setPointerCapture(e.pointerId); pts.set(e.pointerId,e.clientX); const r=xrange(); if(pts.size===1){pan={x:e.clientX,a:r[0],b:r[1]};} else if(pts.size===2){const xs=[...pts.values()];pinch={d:Math.abs(xs[0]-xs[1])||1,a:r[0],b:r[1],cx:(xs[0]+xs[1])/2};pan=null;} });
+      c.addEventListener('pointermove',e=>{ if(!pts.has(e.pointerId))return; pts.set(e.pointerId,e.clientX); const rr=c.getBoundingClientRect(); const tm=Math.max(1,T[T.length-1]||1);
+        if(pts.size>=2&&pinch){ const xs=[...pts.values()]; const d=Math.abs(xs[0]-xs[1])||1; const f=pinch.d/d; const span=pinch.b-pinch.a; const tc=pinch.a+((pinch.cx-rr.left)/rr.width*CW-cmL)/cpw*span; let na=Math.max(0,tc-(tc-pinch.a)*f), nb=Math.min(tm,tc+(pinch.b-tc)*f); if(isFinite(na)&&isFinite(nb)&&nb-na>=2){vView=[na,nb];dibujar();} }
+        else if(pan){ const dpx=(e.clientX-pan.x)/rr.width*CW; const span=pan.b-pan.a; let na=pan.a-dpx/cpw*span, nb=pan.b-dpx/cpw*span; if(!isFinite(na)||!isFinite(nb))return; if(na<0){nb-=na;na=0;} if(nb>tm){na-=(nb-tm);nb=tm; if(na<0)na=0;} vView=[na,nb]; dibujar(); } });
+      const up=e=>{ pts.delete(e.pointerId); if(pts.size<2)pinch=null; if(pts.size===0)pan=null; };
+      c.addEventListener('pointerup',up); c.addEventListener('pointercancel',up);
+    })();
+    $('baroFit').onclick=()=>{ vView=null; dibujar(); };
+    $('leftSel').onclick=()=>{ leftMetric=(leftMetric==='pres')?'alt':'pres'; const alt=leftMetric==='alt';
+      $('leftSel').innerHTML=`<i style="background:${alt?'#35d07f':'#4f8cff'}"></i>`+(alt?'Altura (m)':'Presión (hPa)'); dibujar(); };
+    $('showTemp').onchange=dibujar;
+
+    // ============ PWM ============
+    let pwmTimer=null;
+    async function leerPwm(){
+      const o=await pedir('GETPWM');
+      const sig=o.SENAL||'–';
+      $('pSenal').textContent=sig; $('pSenal').style.color = sig==='SI'?'var(--ok)':(sig==='NO'?'var(--err)':'');
+      $('pUs').textContent=(o.US||'–')+' µs'; $('pCrudo').textContent=(o.CRUDO||'–')+' µs';
+      $('pConsec').textContent=o.CONSEC||'–';
+      $('pMin').textContent=(o.MIN&&o.MIN!=='0')?(o.MIN+' µs'):'sin calibrar';
+    }
+    function pwmToggle(){ if(pwmTimer){pararPwm();return;} $('pwmStart').textContent='⏹ Detener';$('pwmStart').style.background='var(--err)'; leerPwm(); pwmTimer=setInterval(leerPwm,400); }
+    function pararPwm(){ if(pwmTimer){clearInterval(pwmTimer);pwmTimer=null;} $('pwmStart').textContent='▶ Iniciar';$('pwmStart').style.background=''; }
+    $('pwmStart').onclick=pwmToggle;
+
+    // ============ ESC (solo USB) ============
+    function actualizarEsc(){
+      const hab = mode==='usb' && $('escOk').checked;
+      $('escVal').disabled=!hab; $('escSend').disabled=!hab; $('escMin').disabled=!(mode==='usb');
+    }
+    $('escOk').onchange=actualizarEsc;
+    $('escVal').oninput=e=>$('escUs').textContent=e.target.value+' µs';
+    $('escSend').onclick=()=>enviarSolo('ESCTEST:'+$('escVal').value);
+    $('escMin').onclick=()=>{ enviarSolo('ESCMIN'); $('escVal').value=1000; $('escUs').textContent='1000 µs'; };
+
+    // ============ INFO (config/log/memoria) ============
+    async function mostrarInfo(cmd){
+      $('infoBox').innerHTML='<div class="hint">Leyendo…</div>';
+      const o=await pedir(cmd,1800);
+      const keys=Object.keys(o);
+      if(!keys.length){ $('infoBox').innerHTML='<div class="hint">Sin respuesta.</div>'; return; }
+      $('infoBox').innerHTML=keys.map(k=>`<div><span>${k}</span><b>${o[k]}</b></div>`).join('');
+    }
+    $('btnCfg').onclick=()=>mostrarInfo('GETCFG');
+    $('btnInit').onclick=()=>mostrarInfo('GETINIT');
+    $('btnFs').onclick=()=>mostrarInfo('GETFS');
+
+    // ============ misc ============
+    $('btnLog').onclick=()=>{ const o=$('log').classList.toggle('hidden'); $('btnLog').textContent=o?'Mostrar':'Ocultar'; };
+    if(!('serial' in navigator)) $('btnUsb').title='Web Serial no disponible en este navegador';
+    if(!navigator.bluetooth) $('btnBle').title='Web Bluetooth no disponible en este navegador';
+  </script>
+</body>
+</html>
