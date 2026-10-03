@@ -3,8 +3,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Firmware%20estable-3.1.1-brightgreen">
-  <img src="https://img.shields.io/badge/Firmware%20beta-3.1.10-orange">
+  <img src="https://img.shields.io/badge/Firmware-3.1.10-blue">
   <img src="https://img.shields.io/badge/Web-3.1.14-blue">
   <img src="https://img.shields.io/badge/Plataforma-ESP32--C3-orange">
   <img src="https://img.shields.io/badge/Categor%C3%ADa-F5L-lightgrey">
@@ -116,8 +115,7 @@ Este repositorio público contiene todo lo necesario para instalar y utilizar **
 
 ## Versión actual
 
-**VERSION FW estable:** `3.1.1`  
-**VERSION FW beta:** `3.1.10` 🧪 (de la 3.1.2 en adelante son beta, en prueba)  
+**VERSION FW:** `3.1.10`  
 **VERSION WEB:** `3.1.14`
 
 **Historial de cambios**

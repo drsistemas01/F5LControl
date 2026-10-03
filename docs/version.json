@@ -1,10 +1,10 @@
 {
   "fw": {
-    "version": "3.1.1",
+    "version": "3.1.10",
     "tipo": "estable",
     "urgencia": "opcional",
-    "fecha": "2026-09-20",
-    "notas": "Version ESTABLE recomendada. De la 3.1.2 en adelante son BETA (en prueba) y no se ofrecen por aca; si las queres probar, se instalan a mano desde la carpeta FW/BETA. La 3.1.1 muestra la pantalla UPDATE con barra de progreso durante la actualizacion por Bluetooth."
+    "fecha": "2026-10-03",
+    "notas": "Pantallas del OLED mas claras (ARMADO / GRABADO / resultado con numero grande), ARMADO solo antes de despegar, reset con el boton mejorado, y arreglo del E1 del bus I2C con el OLED (solo version con pantalla). Incluye tambien el PWM minimo del ESC configurable, corte por sensor tolerante y reset controlado por boton."
   },
   "web": {
     "version": "3.1.14",
