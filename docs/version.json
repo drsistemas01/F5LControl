@@ -1,0 +1,16 @@
+{
+  "fw": {
+    "version": "3.1.10",
+    "tipo": "estable",
+    "urgencia": "opcional",
+    "fecha": "2026-10-03",
+    "notas": "Pantallas del OLED mas claras (ARMADO / GRABADO / resultado con numero grande), ARMADO solo antes de despegar, reset con el boton mejorado, y arreglo del E1 del bus I2C con el OLED (solo version con pantalla). Incluye tambien el PWM minimo del ESC configurable, corte por sensor tolerante y reset controlado por boton."
+  },
+  "web": {
+    "version": "3.1.17",
+    "tipo": "estable",
+    "urgencia": "recomendada",
+    "fecha": "2026-10-13",
+    "notas": "Arreglo: al conectar ya no quedan vacios el estado del equipo (barometro/PWM) y la configuracion. La web pide los datos en orden y reintenta si la configuracion no llega."
+  }
+}
