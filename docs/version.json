@@ -1,0 +1,16 @@
+{
+  "fw": {
+    "version": "3.1.15",
+    "tipo": "mejora",
+    "urgencia": "opcional",
+    "fecha": "2026-11-10",
+    "notas": "Pantallas mas claras: vuelo NULO con los colores invertidos en el resultado; sin rearranque, la pantalla de arranque con los colores invertidos; letras de F5L mas separadas. Incluye lo de la 3.1.11-3.1.13: resultado sin zoom, entrada PWM invertida opcional y rearranque configurable."
+  },
+  "web": {
+    "version": "3.1.25",
+    "tipo": "mejora",
+    "urgencia": "recomendada",
+    "fecha": "2026-11-17",
+    "notas": "La imagen de Copiar grafico ahora trae arriba el numero de vuelo, el piloto y el modelo, y tres recuadros con la altura maxima, el tiempo de vuelo estimado y el tiempo de motor. Incluye lo anterior: nuevo modo claro y modo oscuro: por defecto sigue al del celular o la computadora, y con el boton de arriba a la derecha se puede elegir claro, oscuro o automatico (se recuerda la eleccion). Incluye el logo de F5LControl (grande como portada al abrirla y chico al conectar, dentro del mismo archivo), el boton Copiar grafico con explicacion, y que las banderas de idioma ya no aparecen al conectar. Incluye lo de la 3.1.20 y 3.1.21: al conectar ya no quedan vacios el estado y la configuracion, el estado muestra si la placa tiene rearranque o no, y rearranque y entrada PWM invertida piden confirmacion y reinician la placa."
+  }
+}
