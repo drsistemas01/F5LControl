@@ -1,0 +1,20 @@
+MOD1
+id=F5J
+ver=1
+fwmin=4.0.0
+nombre=F5J
+desc=Reglamento F5J
+splash=F5J
+splash2=
+ctiempo=1
+tmotor=30
+rearme=0
+espera=0
+corte=0
+altcorte=0
+medir=1
+medir_s=10
+pfinal=1
+final=1
+fecha=2026-11-27
+FIRMA=1a90bda94a787b2b26f97156e9acc1dd20376af6c98014230eae7d234751e14e6c52a4e9a7355a31151481e47a90b2834b33fb19fde4e57cd09e26f84d729843

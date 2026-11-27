@@ -1,0 +1,20 @@
+MOD1
+id=F5J_TRAINING
+ver=1
+fwmin=4.0.0
+nombre=F5J TRAINING
+desc=Reglamento F5J
+splash=F5J
+splash2=TRAINING
+ctiempo=1
+tmotor=30
+rearme=1
+espera=10
+corte=0
+altcorte=0
+medir=1
+medir_s=10
+pfinal=1
+final=1
+fecha=2026-11-27
+FIRMA=edb07a764bc130938c64b267c5ac81c10ebe67a73eafa79ed52d5d860dafbff9bf8313273c47d9dba0fb36db5a5514470debfce08e48c84bbbb570de88ff1473

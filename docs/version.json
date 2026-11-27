@@ -1,0 +1,16 @@
+{
+  "fw": {
+    "version": "3.1.15",
+    "tipo": "mejora",
+    "urgencia": "opcional",
+    "fecha": "2026-11-10",
+    "notas": "Pantallas mas claras: vuelo NULO con los colores invertidos en el resultado; sin rearranque, la pantalla de arranque con los colores invertidos; letras de F5L mas separadas. Incluye lo de la 3.1.11-3.1.13: resultado sin zoom, entrada PWM invertida opcional y rearranque configurable."
+  },
+  "web": {
+    "version": "3.1.27",
+    "tipo": "mejora",
+    "urgencia": "recomendada",
+    "fecha": "2026-11-22",
+    "notas": "El encabezado muestra, al conectar, si la placa es LIBRE (con rearranque) u OFICIAL (sin rearranque). Incluye la 3.1.26: vista previa del nombre Bluetooth con LIBRE/OFICIAL, y lo anterior: copiar grafico con datos, modo claro/oscuro y confirmaciones al cambiar rearranque o entrada PWM invertida."
+  }
+}

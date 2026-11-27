@@ -1,0 +1,20 @@
+MOD1
+id=F5L_TRAINING
+ver=1
+fwmin=4.0.0
+nombre=F5L TRAINING
+desc=Reglamento F5L con Rearranque
+splash=F5L
+splash2=TRAINING
+ctiempo=1
+tmotor=30
+rearme=1
+espera=10
+corte=1
+altcorte=90
+medir=0
+medir_s=0
+pfinal=1
+final=0
+fecha=2026-11-27
+FIRMA=a1bbab5c96ca19c2785be7cd1a92c91bb0f07afc0ef47d9becc3e6be5ab97a4305fb1f3aaa79e4dd56302e95f1e33680a9a8e62b1a432ed5f0d21d15aded5067

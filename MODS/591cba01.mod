@@ -1,0 +1,20 @@
+MOD1
+id=F5L
+ver=1
+fwmin=4.0.0
+nombre=F5L
+desc=Reglamento F5L
+splash=F5L
+splash2=
+ctiempo=1
+tmotor=30
+rearme=0
+espera=0
+corte=1
+altcorte=90
+medir=0
+medir_s=0
+pfinal=1
+final=0
+fecha=2026-11-27
+FIRMA=967c831c55950bb44c923f869e4513012794c5021e89989772472be6e529c79e39bf339fc6c7d655d02c75b8ba57cb720313a501836c58361e1048b994799710
